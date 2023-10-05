@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyserial = "*"
+kivy = "*"
+kivymd = {ref = "master", git = "git+https://github.com/kivymd/KivyMD.git"}
+
+[dev-packages]
+pip = "*"
+pipenv = "*"
+
+[requires]
+python_version = "3.10"
