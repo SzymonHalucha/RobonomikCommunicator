@@ -5,10 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Current Project",
+            "name": "PRODUCTION",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/robonomikcommunicatorgui/main.py",
+            "program": "main.py",
+            "console": "externalTerminal",
+            "justMyCode": true,
+            "args": [
+                "&&",
+                "python"
+            ],
+            "pythonArgs": [
+                "-O"
+            ]
+        },
+        {
+            "name": "DEBUG",
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
             "console": "externalTerminal",
             "justMyCode": true,
             "args": [

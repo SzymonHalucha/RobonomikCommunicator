@@ -4,14 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pyserial = "*"
 kivy = "*"
 kivymd = {ref = "master", git = "git+https://github.com/kivymd/KivyMD.git"}
+pyserial = "*"
+watchdog = "*"
+multitasking = "*"
 
 [dev-packages]
 pip = "*"
 pipenv = "*"
-watchdog = "*"
 
 [requires]
 python_version = "3.10"
