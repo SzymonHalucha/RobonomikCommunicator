@@ -1,7 +1,9 @@
+from typing import Callable
+import Utility.logger as logger
 import socket
 
 
-def get_connect(func, host="8.8.8.8", port=53, timeout=3):
+def get_connect(func: "Callable", host: "str" = "8.8.8.8", port: "int" = 53, timeout: "int" = 3) -> "Callable | None":
     def wrapper(*args, **kwargs):
         try:
             socket.setdefaulttimeout(timeout)
@@ -12,15 +14,16 @@ def get_connect(func, host="8.8.8.8", port=53, timeout=3):
     return wrapper
 
 
+@logger.trace_class
 class Database:
     def __init__(self):
-        self.name = "Firebase"
-        self.url = ""
-        self.user_data = ""
+        self.name: "str" = "Firebase"
+        self.url: "str" = ""
+        self.user_data: "str" = ""
         self.firebase = None
 
     @get_connect
-    def get_data_from_collection(self, collection_name: str) -> "dict | None":
+    def get_data_from_collection(self, collection_name: "str") -> "dict | None":
         try:
             data = self.firebase.get(self.url, collection_name)
             return data
