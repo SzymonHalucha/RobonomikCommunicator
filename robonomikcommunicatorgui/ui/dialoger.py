@@ -57,11 +57,8 @@ class Dialoger:
     def show_delete_layout_dialog(self, callback: "Callable" = None):
         self.open_delete_dialog("Delete Layout", "Are you sure you want to delete this layout?", on_delete=callback)
 
-    def show_add_controller_dialog(self, content: "styles.MyBaseControllerDialog" = None, callback: "Callable" = None):
-        self.open_confirm_dialog("Add Controller", styles.MyTriggerControllerDialog() if content is None else content, on_confirm=callback)
-
-    def show_edit_controller_dialog(self, controller: "Controller", callback: "Callable" = None):
-        self.open_confirm_dialog("Edit Controller", styles.MyBaseControllerDialog(controller=controller), on_confirm=callback)
+    # def show_edit_controller_dialog(self, controller: "Controller", callback: "Callable" = None):
+    #     self.open_confirm_dialog("Edit Controller", styles.MyBaseControllerDialog(controller=controller), on_confirm=callback)
 
     def show_delete_controller_dialog(self, callback: "Callable" = None):
         self.open_delete_dialog("Delete Controller", "Are you sure you want to delete this controller?", on_delete=callback)

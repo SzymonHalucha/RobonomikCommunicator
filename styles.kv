@@ -14,6 +14,16 @@ TopBar:
         title: "Robonomik Communicator"
     MyClosedPortViewGroup:
     MyOpenPortViewGroup:
+    # CodeInput:
+    #     lexer: KivyLexer()
+    #     style_name: "native"
+    #     on_text: app.update_kv_file(self.text)
+    #     size_hint_x: .7
+    # HotReloadViewer:
+    #     size_hint_x: .3
+    #     path: app.path_to_kv_file
+    #     errors_text_color: 1, 1, 0, 1
+    #     errors_background_color: app.theme_cls.bg_dark
 
 
 <MyClosedPortViewGroup>:
@@ -39,6 +49,7 @@ TopBar:
         title: "Layouts"
         LayoutsWindow:
         LayoutsEditWindow:
+        CreateControllerWindow:
     MyTab:
         title: "Variables"
         VariablesWindow:
@@ -167,7 +178,7 @@ TopBar:
 
 <LayoutsWindow>:
     spacing: dp(15)
-    size_hint: .95, .95
+    size_hint: .9, .9
     pos_hint: {"center_x": .5, "center_y": .5}
     orientation: "vertical"
     MDLabel:
@@ -201,7 +212,7 @@ TopBar:
 
 <LayoutsEditWindow>:
     spacing: dp(15)
-    size_hint: .95, .95
+    size_hint: .9, .9
     pos_hint: {"center_x": .5, "center_y": .5}
     orientation: "vertical"
     MDLabel:
@@ -228,6 +239,66 @@ TopBar:
     MDFloatLayout:
         id: controllers_board
         do_rotation: False
+
+
+<CreateControllerWindow>:
+    spacing: dp(25)
+    size_hint: .9, .9
+    pos_hint: {"center_x": .5, "center_y": .5}
+    orientation: "vertical"
+    MDBoxLayout:
+        spacing: dp(15)
+        adaptive_size: True
+        pos_hint: {"center_x": .5, "center_y": .5}
+        orientation: "horizontal"
+        MDRaisedButton:
+            text: "Save Controller"
+            on_release: app.on_save_controller()
+        MDRectangleFlatButton:
+            text: "Cancel"
+            on_release: app.on_cancel_controller()
+    MDScrollView:
+        do_scroll_x: False
+        scroll_wheel_distance: dp(100)
+        bar_width: dp(10)
+        MDBoxLayout:
+            spacing: dp(15)
+            adaptive_height: True
+            orientation: "vertical"
+            MDTextField:
+                id: controller_name
+                hint_text: "Controller Name"
+                text: "Example"
+                mode: "rectangle"
+                multiline: False
+            MDRaisedButton:
+                id: controller_type
+                size_hint_x: 1
+                text: "Trigger"
+                on_release: root.show_variables(*args)
+            MDTextField:
+                id: controller_variable
+                hint_text: "Variable"
+                mode: "rectangle"
+                multiline: False
+            MDBoxLayout:
+                spacing: dp(15)
+                adaptive_height: True
+                orientation: "horizontal"
+                MDTextField:
+                    id: controller_width
+                    hint_text: "Width"
+                    mode: "rectangle"
+                    multiline: False
+                    input_filter: "int"
+                    text: "200"
+                MDTextField:
+                    id: controller_height
+                    hint_text: "Height"
+                    mode: "rectangle"
+                    multiline: False
+                    input_filter: "int"
+                    text: "200"
 
 
 <VariablesWindow>:

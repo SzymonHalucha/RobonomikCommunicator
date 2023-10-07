@@ -15,7 +15,7 @@ class Messenger(Observer):
         self.baudrate: "int" = 9600
         self.serial: "serial.Serial" = None
         self.is_open: "bool" = False
-        self._history: "list[(str, str, bool)]" = []
+        self._history: "list[tuple[str, str, bool]]" = []
         self._listen_serial_thread: "threading.Thread" = None
 
     def get_references(self):
@@ -66,15 +66,15 @@ class Messenger(Observer):
                     return
 
     @property
-    def history(self) -> "list[(str, str, bool)]":
+    def history(self) -> "list[tuple[str, str, bool]]":
         return self._history
 
     @property
-    def history_last(self) -> "(str, str, bool)":
+    def history_last(self) -> "tuple[str, str, bool]":
         return self._history[-1] if len(self._history) > 0 else None
 
     @history.setter
-    def history(self, msg: "(str, bool)"):
+    def history(self, msg: "tuple[str, bool]"):
         current_time: "str" = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
         self._history.append((current_time, msg[0], msg[1]))
         self.notify(self._history[-1])

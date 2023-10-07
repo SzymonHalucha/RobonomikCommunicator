@@ -6,6 +6,7 @@ from kivymd.uix.list import IRightBodyTouch, BaseListItem, TwoLineRightIconListI
 from kivymd.uix.selectioncontrol import MDCheckbox
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.card import MDCard
 from controller import Controller
@@ -77,7 +78,7 @@ class ConsoleWindow(BaseView):
         super().close(*args)
 
     def update(self, *args):
-        history = self._app.messenger.history[-100:]
+        history = self._app.messenger.history[-150:]
         show_timestamps = self._app.session.show_console_timestamps
         self.ids.console.text = ""
         for msg in history:
@@ -121,7 +122,18 @@ class LayoutsEditWindow(BaseView):
 
 
 class CreateControllerWindow(BaseView):
-    pass
+    def update(self):
+        pass
+
+    def show_variables(self, *args):
+        print(args)
+        items = [{
+            "text": variable.name,
+            "on_release": print(variable.name),
+            "size_hint_x": 1,
+        } for variable in self._app.session.get_variables()]
+        menu = MDDropdownMenu(caller=args[0], items=items, position="bottom", width_mult=4)
+        menu.open()
 
 
 class VariablesWindow(BaseView):

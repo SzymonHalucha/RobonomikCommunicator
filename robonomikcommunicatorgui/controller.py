@@ -6,7 +6,7 @@ import logger
 class Controller(ISerialize):
     def __init__(self, **kwargs):
         self.name: "str" = kwargs.get("name", "Default")
-        self.type: "str" = kwargs.get("type", "Trigger")
+        self.type: "str" = kwargs.get("type", Controller.get_types()[0])
         self.custom_name: "str" = kwargs.get("custom_name", "Default")
         self.variable_name: "str" = kwargs.get("variable_name", "Default")
         self.start_range: "str" = kwargs.get("start_range", "0")
@@ -36,3 +36,7 @@ class Controller(ISerialize):
         self.position = dict["position"]
         self.size = dict["size"]
         return self
+
+    @classmethod
+    def get_types(cls) -> "tuple[str, ...]":
+        return ("Trigger", "Switch", "Slider", "Input")

@@ -6,8 +6,8 @@ import logger
 class Variable(ISerialize):
     def __init__(self, **kwargs):
         self.name: "str" = kwargs.get("name", "Default")
-        self.type: "str" = kwargs.get("type", "Trigger")
-        self.direction: "str" = kwargs.get("direction", "Output")
+        self.type: "str" = kwargs.get("type", Variable.get_types()[0])
+        self.direction: "str" = kwargs.get("direction", Variable.get_directions()[0])
         self.interval: "int" = kwargs.get("interval", 100)
 
     def serialize(self) -> "dict":
@@ -24,3 +24,11 @@ class Variable(ISerialize):
         self.direction = dict["direction"]
         self.interval = dict["interval"]
         return self
+
+    @classmethod
+    def get_types(cls) -> "tuple[str, ...]":
+        return ("Int", "Float", "String")
+
+    @classmethod
+    def get_directions(cls) -> "tuple[str, ...]":
+        return ("Output", "Input")

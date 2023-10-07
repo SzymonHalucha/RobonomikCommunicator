@@ -1,3 +1,4 @@
+from kivymd.tools.hotreload.app import MDApp as MDAppHotReload  # Debug only
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivy.lang import Builder
@@ -9,10 +10,11 @@ from ui.dialoger import Dialoger
 from ui.viewer import Viewer
 import ui.styles as styles
 import logger
+import os
 
 
 @logger.trace_class
-class RobonomikCommunicator(MDApp):
+class RobonomikCommunicator(MDAppHotReload):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.messenger: "Messenger" = Messenger()
@@ -27,6 +29,7 @@ class RobonomikCommunicator(MDApp):
         self.dialoger.get_references()
 
     def build(self):
+        self.kv_path = os.path.abspath("./styles.kv")
         self.title = 'Robonomik Communicator'
         self.theme_cls.material_style = 'M2'
         self.theme_cls.theme_style = 'Dark'
@@ -35,11 +38,15 @@ class RobonomikCommunicator(MDApp):
         self.theme_cls.accent_palette = 'Orange'
         self.theme_cls.accent_hue = '500'
         Window.size = (1024, 768)
-        return Builder.load_file("./styles.kv")
+        return Builder.load_file(self.kv_path)
 
     def on_start(self):
         Clock.schedule_once(lambda *x: self.viewer.open_group_by_type(styles.MyClosedPortViewGroup))
         Clock.schedule_once(lambda *x: self.viewer.open_view_by_type(styles.ConnectWindow))
+
+    def update_kv_file(self, text):
+        with open(self.kv_path, "w") as f:
+            f.write(text)
 
     def on_port_select(self, port_name: "str"):
         self.messenger.open(port_name, self.session.default_baudrate)
@@ -144,20 +151,23 @@ class RobonomikCommunicator(MDApp):
             self.viewer.update_current_view()
         self.dialoger.show_delete_layout_dialog(lambda x: delete_layout())
 
-    def on_add_controller(self, content: "styles.MyBaseControllerDialog" = None):
-        def add_controller(content: "styles.MyBaseControllerDialog"):
-            if self.session.check_if_controller_is_valid(content.edited_controller):
-                self.session.add_controller(content.edited_controller)
-                self.viewer.update_current_view()
-            else:
-                self.dialoger.show_text_field_error("controller_name", "Controller name is not valid")
-        self.dialoger.show_add_controller_dialog(content, lambda x: add_controller(x))  # Replace this with a separate view
+    def on_add_controller(self):
+        self.viewer.open_view_by_type(styles.CreateControllerWindow)
+
+    def on_save_controller(self):
+        self.session.save_session()
+        self.viewer.open_view_by_type(styles.LayoutsEditWindow)
+
+    def on_cancel_controller(self):
+        self.session.discard_session()
+        self.viewer.open_view_by_type(styles.LayoutsEditWindow)
 
     def on_edit_controller(self, root: "styles.MyBaseControllerEditCard"):
-        def edit_controller(content: "styles.MyBaseControllerDialog"):
-            self.session.edit_controller(content.controller, content.edited_controller)
-            self.viewer.update_current_view()
-        self.dialoger.show_edit_controller_dialog(root.controller, lambda x: edit_controller(x))  # Replace this with a separate view
+        # def edit_controller(content: "styles.MyBaseControllerDialog"):
+        #     self.session.edit_controller(content.controller, content.edited_controller)
+        #     self.viewer.update_current_view()
+        # self.dialoger.show_edit_controller_dialog(root.controller, lambda x: edit_controller(x))  # Replace this with a separate view
+        self.viewer.open_view_by_type(styles.CreateControllerWindow)
 
     def on_delete_controller(self, root: "styles.MyBaseControllerEditCard"):
         def delete_controller():
