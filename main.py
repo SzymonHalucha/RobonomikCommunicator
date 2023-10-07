@@ -19,13 +19,9 @@ class RobonomikCommunicatorHotReload(MDApp):
         self.screen_manager = MDScreenManager()
         self.database = Database()
         self.set_application_style()
-        self.generate_application_screens()
+        self.generate_application_views()
         Window.bind(on_key_down=self.on_keyboard_down)
         return self.screen_manager
-
-    def on_start(self):
-        super().on_start()
-        Clock.schedule_once(self.generate_application_screens)
 
     def set_application_style(self):
         self.title = "Robonomik Communicator DEBUG"
@@ -37,10 +33,10 @@ class RobonomikCommunicatorHotReload(MDApp):
         self.theme_cls.accent_hue = "500"
         Window.size = (1024, 768)
 
-    def generate_application_screens(self, *args):
-        for i, screen_name in enumerate(views.views.keys()):
-            view: "BaseView" = views.views[screen_name]["view"](name=screen_name)
-            presenter: "BasePresenter" = views.views[screen_name]["presenter"]()
+    def generate_application_views(self, *args):
+        for i, view_name in enumerate(views.views.keys()):
+            view: "BaseView" = views.views[view_name]["view"](name=view_name)
+            presenter: "BasePresenter" = views.views[view_name]["presenter"]()
             presenter.view = view
             view.presenter = presenter
             view.screen_manager = self.screen_manager
@@ -60,7 +56,7 @@ class RobonomikCommunicator(MDApp):
 
     def build(self) -> "MDScreenManager":
         self.set_application_style()
-        self.generate_application_screens()
+        self.generate_application_views()
         return self.screen_manager
 
     def set_application_style(self):
@@ -73,10 +69,10 @@ class RobonomikCommunicator(MDApp):
         self.theme_cls.accent_hue = "500"
         Window.size = (1024, 768)
 
-    def generate_application_screens(self, *args):
-        for i, screen_name in enumerate(views.views.keys()):
-            view: "BaseView" = views.views[screen_name]["view"](name=screen_name)
-            presenter: "BasePresenter" = views.views[screen_name]["presenter"]()
+    def generate_application_views(self, *args):
+        for i, view_name in enumerate(views.views.keys()):
+            view: "BaseView" = views.views[view_name]["view"](name=view_name)
+            presenter: "BasePresenter" = views.views[view_name]["presenter"]()
             presenter.view = view
             view.presenter = presenter
             view.screen_manager = self.screen_manager
