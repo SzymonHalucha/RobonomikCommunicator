@@ -1,23 +1,23 @@
-from View import views
-from View import BaseView
-from Model.database import Database
-from Presenter.base_presenter import BasePresenter
+from __future__ import annotations
+from kivy.clock import Clock
+from kivy.core.window import Window
 from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.tools.hotreload.app import MDApp
-from kivy.core.window import Window
-from kivy.clock import Clock
+import Model.database as database
+import Presenter.base_presenter as base_presenter
+import View.base_view as base_view
+import View.views as views
+import importlib
 import os
 
 
 class RobonomikCommunicatorHotReload(MDApp):
     KV_DIRS = [os.path.abspath("./View")]
 
-    def build_app(self) -> "MDScreenManager":
-        import importlib
-        import View.views
-        importlib.reload(View.views)
-        self.screen_manager = MDScreenManager()
-        self.database = Database()
+    def build_app(self) -> MDScreenManager:
+        importlib.reload(views)
+        self.screen_manager: MDScreenManager = MDScreenManager()
+        self.database: database.Database = database.Database()
         self.set_application_style()
         self.generate_application_views()
         Window.bind(on_key_down=self.on_keyboard_down)
@@ -34,9 +34,9 @@ class RobonomikCommunicatorHotReload(MDApp):
         Window.size = (1024, 768)
 
     def generate_application_views(self, *args):
-        for i, view_name in enumerate(views.views.keys()):
-            view: "BaseView" = views.views[view_name]["view"](name=view_name)
-            presenter: "BasePresenter" = views.views[view_name]["presenter"]()
+        for i, view_name in enumerate(views.views_dict.keys()):
+            presenter: base_presenter.BasePresenter = views.views_dict[view_name]["presenter"]()
+            view: base_view.BaseView = views.views_dict[view_name]["view"](name=view_name)
             presenter.view = view
             view.presenter = presenter
             view.screen_manager = self.screen_manager
@@ -51,10 +51,10 @@ class RobonomikCommunicator(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.load_all_kv_files(os.path.abspath("./View"))
-        self.screen_manager = MDScreenManager()
-        self.database = Database()
+        self.screen_manager: MDScreenManager = MDScreenManager()
+        self.database: database.Database = database.Database()
 
-    def build(self) -> "MDScreenManager":
+    def build(self) -> MDScreenManager:
         self.set_application_style()
         self.generate_application_views()
         return self.screen_manager
@@ -70,9 +70,9 @@ class RobonomikCommunicator(MDApp):
         Window.size = (1024, 768)
 
     def generate_application_views(self, *args):
-        for i, view_name in enumerate(views.views.keys()):
-            view: "BaseView" = views.views[view_name]["view"](name=view_name)
-            presenter: "BasePresenter" = views.views[view_name]["presenter"]()
+        for i, view_name in enumerate(views.views_dict.keys()):
+            presenter: base_presenter.BasePresenter = views.views_dict[view_name]["presenter"]()
+            view: base_view.BaseView = views.views_dict[view_name]["view"](name=view_name)
             presenter.view = view
             view.presenter = presenter
             view.screen_manager = self.screen_manager

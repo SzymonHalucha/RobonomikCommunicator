@@ -1,10 +1,11 @@
-from .base_presenter import BasePresenter
+from __future__ import annotations
+import Presenter.base_presenter as base_presenter
 
 if __debug__:
     import importlib
     import View.MainView
-    importlib.reload(View.MainView.main_view)
+    importlib.reload(View.MainView)
 
 
-class MainViewPresenter(BasePresenter):
+class MainViewPresenter(base_presenter.BasePresenter):
     pass

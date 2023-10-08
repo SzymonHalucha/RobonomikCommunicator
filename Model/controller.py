@@ -1,3 +1,4 @@
+from __future__ import annotations
 from serialize import ISerialize
 import Utility.logger as logger
 
@@ -5,16 +6,16 @@ import Utility.logger as logger
 @logger.trace_class
 class Controller(ISerialize):
     def __init__(self, **kwargs):
-        self.name: "str" = kwargs.get("name", "Default")
-        self.type: "str" = kwargs.get("type", "Trigger")
-        self.custom_name: "str" = kwargs.get("custom_name", "Default")
-        self.variable_name: "str" = kwargs.get("variable_name", "Default")
-        self.start_range: "str" = kwargs.get("start_range", "0")
-        self.end_range: "str" = kwargs.get("end_range", "255")
-        self.position: "tuple[float, float]" = kwargs.get("position", (0.5, 0.5))
-        self.size: "tuple[int, int]" = kwargs.get("size", (200, 200))
+        self.name: str = kwargs.get("name", "Default")
+        self.type: str = kwargs.get("type", "Trigger")
+        self.custom_name: str = kwargs.get("custom_name", "Default")
+        self.variable_name: str = kwargs.get("variable_name", "Default")
+        self.start_range: str = kwargs.get("start_range", "0")
+        self.end_range: str = kwargs.get("end_range", "255")
+        self.position: tuple[float, float] = kwargs.get("position", (0.5, 0.5))
+        self.size: tuple[int, int] = kwargs.get("size", (200, 200))
 
-    def serialize(self) -> "dict":
+    def serialize(self) -> dict:
         return {
             "name": self.name,
             "type": self.type,
@@ -26,7 +27,7 @@ class Controller(ISerialize):
             "size": self.size
         }
 
-    def deserialize(self, dict: "dict") -> "Controller":
+    def deserialize(self, dict: dict) -> Controller:
         self.name = dict["name"]
         self.type = dict["type"]
         self.custom_name = dict["custom_name"]

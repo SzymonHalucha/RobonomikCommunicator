@@ -1,3 +1,4 @@
+from __future__ import annotations
 from kivymd.uix.list import IRightBodyTouch, BaseListItem, TwoLineRightIconListItem, TwoLineAvatarIconListItem
 from kivymd.uix.selectioncontrol import MDCheckbox
 from kivymd.uix.floatlayout import MDFloatLayout

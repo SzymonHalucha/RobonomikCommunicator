@@ -1,3 +1,4 @@
+from __future__ import annotations
 from serialize import ISerialize
 import Utility.logger as logger
 import json
@@ -7,12 +8,12 @@ import os
 @logger.trace_class
 class Saver:
     def __init__(self):
-        self._config_path: "str" = "./config.json"
-        self._objects: "dict[str, ISerialize]" = {}
-        self._dicts: "dict[str, dict]" = {}
+        self._config_path: str = "./config.json"
+        self._objects: dict[str, ISerialize] = {}
+        self._dicts: dict[str, dict] = {}
         self.load_config()
 
-    def register(self, object: "ISerialize"):
+    def register(self, object: ISerialize):
         if object.__class__.__name__ in self._dicts:
             dict_ = self._dicts.pop(object.__class__.__name__)
             object.deserialize(dict_)

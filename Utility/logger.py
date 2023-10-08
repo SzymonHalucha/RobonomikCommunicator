@@ -1,3 +1,4 @@
+from __future__ import annotations
 from inspect import isfunction
 from functools import wraps
 from typing import Callable
@@ -18,8 +19,8 @@ def init():
     return logger
 
 
-_logger = None
-# _logger = init()
+_logger: logging = None
+# _logger: logging = init()
 
 
 def trace_class(cls):
@@ -29,7 +30,7 @@ def trace_class(cls):
     def get_class_methods(cls):
         return ((method_name, getattr(cls, method_name)) for method_name in dir(cls) if isfunction(getattr(cls, method_name)))
 
-    def trace_method(cls, name: "str", func: "Callable"):
+    def trace_method(cls, name: str, func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
             log = f"Class \"{cls.__name__}\" calling method \"{name}\"."

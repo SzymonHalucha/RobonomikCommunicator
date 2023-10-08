@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+
 class Observable:
     def __init__(self):
-        self._observers: "list" = []
+        self._observers: list = []
 
     def notify(self, subject):
         for observer in self._observers:

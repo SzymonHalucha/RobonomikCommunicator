@@ -1,22 +1,23 @@
-from Utility.observable import Observable
+from __future__ import annotations
 from threading import Thread
 from serial import Serial
+import Utility.observable as obsr
 import Utility.logger as logger
 import datetime
 
 
 @logger.trace_class
-class Messenger(Observable):
+class Messenger(obsr.Observable):
     def __init__(self):
         super().__init__()
-        self.port: "str" = ""
-        self.baudrate: "int" = 9600
-        self.is_open: "bool" = False
-        self.serial: "Serial" = None
-        self._history: "list[(str, str, bool)]" = []
-        self._listen_serial_thread: "Thread" = None
+        self.port: str = ""
+        self.baudrate: int = 9600
+        self.is_open: bool = False
+        self.serial: Serial = None
+        self._history: list[(str, str, bool)] = []
+        self._listen_serial_thread: Thread = None
 
-    def open(self, port: "str", baudrate: "int"):
+    def open(self, port: str, baudrate: int):
         if self.is_open:
             self.close()
         self.port = port
@@ -36,11 +37,11 @@ class Messenger(Observable):
     def clear_history(self):
         self._history = []
 
-    def send(self, msg: "str"):
+    def send(self, msg: str):
         self.history = (f"{msg}\n", True)
         self.serial.write(msg.encode())
 
-    def recieve(self) -> "str":
+    def recieve(self) -> str:
         return self.serial.readline().decode()
 
     def start_listen_serial(self):
@@ -61,16 +62,16 @@ class Messenger(Observable):
                     return
 
     @property
-    def history(self) -> "list[(str, str, bool)]":
+    def history(self) -> list[(str, str, bool)]:
         return self._history
 
     @property
-    def history_last(self) -> "(str, str, bool) | None":
+    def history_last(self) -> (str, str, bool) | None:
         return self._history[-1] if len(self._history) > 0 else None
 
     @history.setter
-    def history(self, msg: "(str, bool)"):
-        current_time: "str" = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
+    def history(self, msg: (str, bool)):
+        current_time: str = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
         self._history.append((current_time, msg[0], msg[1]))
         self.notify(self._history[-1])
 
