@@ -9,13 +9,13 @@ import os
 
 
 def init():
-    file_handler = logging.FileHandler(filename=os.path.abspath("./app.log"), mode="w", encoding="utf-8")
-    file_handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)s] %(message)s"))
     stream_handler = logging.StreamHandler(stream=sys.stdout)
     stream_handler.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
+    file_handler = logging.FileHandler(filename=os.path.abspath("./app.log"), mode="w", encoding="utf-8")
+    file_handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)s] %(message)s"))
     logger = logging.getLogger("Communicator")
-    logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
+    logger.addHandler(file_handler)
     return logger
 
 
