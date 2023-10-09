@@ -1,6 +1,6 @@
 from __future__ import annotations
-import presenters.base_presenter as base_presenter
+from presenters.base_presenter import BasePresenter
 
 
-class ConnectedPresenter(base_presenter.BasePresenter):
+class ConnectedPresenter(BasePresenter):
     pass

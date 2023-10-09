@@ -1,0 +1,48 @@
+<MainDesktopView>
+    orientation: "vertical"
+    MDTopAppBar:
+        id: top_app_bar
+        title: "Robonomik Communicator"
+    MDTabs:
+        lock_swiping: True
+        on_tab_switch: root.on_tab_switch(*args)
+        MyTab:
+            title: "Connect"
+            ConnectDesktopSubview:
+            Connect2DesktopSubview:
+        MyTab:
+            title: "Settings"
+            SettingsDesktopSubview:
+            Settings2DesktopSubview:
+
+
+<ConnectDesktopSubview>
+    MDLabel:
+        text: "Connect"
+    MDRaisedButton:
+        text: "Connect2"
+        on_release: root.view_parent.open_subview_by_name("Connect2DesktopSubview")
+
+
+<Connect2DesktopSubview>
+    MDLabel:
+        text: "Connect2"
+    MDRaisedButton:
+        text: "Connect"
+        on_release: root.view_parent.open_subview_by_name("ConnectDesktopSubview")
+
+
+<SettingsDesktopSubview>
+    MDLabel:
+        text: "Settings"
+    MDRaisedButton:
+        text: "Settings2"
+        on_release: root.view_parent.open_subview_by_name("Settings2DesktopSubview")
+
+
+<Settings2DesktopSubview>
+    MDLabel:
+        text: "Settings2"
+    MDRaisedButton:
+        text: "Settings"
+        on_release: root.view_parent.open_subview_by_name("SettingsDesktopSubview")

@@ -1,11 +1,8 @@
 from __future__ import annotations
 from kivy.core.window import Window
-from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.tools.hotreload.app import MDApp
-import presenters.base_presenter as base_presenter
-import models.database as database
-import views.views_data as views_data
-import views.base_view as base_view
+from views.common.common import MyRootWidget
+import views.views as views
 import importlib
 import os
 
@@ -13,14 +10,11 @@ import os
 class RobonomikCommunicatorHotReload(MDApp):
     KV_DIRS = [os.path.abspath("./views")]
 
-    def build_app(self) -> MDScreenManager:
-        importlib.reload(views_data)
-        self.screen_manager: MDScreenManager = MDScreenManager()
-        self.database: database.Database = database.Database()
-        self.set_application_style()
-        self.generate_application_views()
+    def build_app(self) -> MyRootWidget:
+        importlib.reload(views)
         Window.bind(on_key_down=self.on_keyboard_down)
-        return self.screen_manager
+        self.set_application_style()
+        return self.generate_application_views()
 
     def set_application_style(self):
         self.title = "Robonomik Communicator DEBUG"
@@ -32,35 +26,28 @@ class RobonomikCommunicatorHotReload(MDApp):
         self.theme_cls.accent_hue = "500"
         Window.size = (1024, 768)
 
-    def generate_application_views(self, *args):
-        for i, view_name in enumerate(views_data.data.keys()):
-            presenter: base_presenter.BasePresenter = views_data.data[view_name]["presenter"]()
-            view: base_view.BaseView = views_data.data[view_name]["view"](name=view_name)
-            presenter.view = view
-            view.presenter = presenter
-            view.screen_manager = self.screen_manager
-            self.screen_manager.add_widget(view)
+    def generate_application_views(self) -> MyRootWidget:
+        root = MyRootWidget()
+        for name in views.data:
+            presenter = views.data[name]["presenter"]()
+            root.add_desktop_view(name, presenter.set_desktop_view(views.data[name]["desktop"](presenter=presenter)))
+            root.add_tablet_view(name, presenter.set_tablet_view(views.data[name]["tablet"](presenter=presenter)))
+            root.add_mobile_view(name, presenter.set_mobile_view(views.data[name]["mobile"](presenter=presenter)))
+        return root
 
     def on_keyboard_down(self, window, keyboard, keycode, text, modifiers):
         if "ctrl" in modifiers and text == "r":
             self.rebuild()
-
-    @property
-    def current(self):
-        return self.screen_manager.current_screen
 
 
 class RobonomikCommunicator(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.load_all_kv_files(os.path.abspath("./views"))
-        self.screen_manager: MDScreenManager = MDScreenManager()
-        self.database: database.Database = database.Database()
-
-    def build(self) -> MDScreenManager:
         self.set_application_style()
-        self.generate_application_views()
-        return self.screen_manager
+
+    def build(self) -> MyRootWidget:
+        return self.generate_application_views()
 
     def set_application_style(self):
         self.title = "Robonomik Communicator"
@@ -72,19 +59,17 @@ class RobonomikCommunicator(MDApp):
         self.theme_cls.accent_hue = "500"
         Window.size = (1024, 768)
 
-    def generate_application_views(self, *args):
-        for i, view_name in enumerate(views_data.data.keys()):
-            presenter: base_presenter.BasePresenter = views_data.data[view_name]["presenter"]()
-            view: base_view.BaseView = views_data.data[view_name]["view"](name=view_name)
-            presenter.view = view
-            view.presenter = presenter
-            view.screen_manager = self.screen_manager
-            self.screen_manager.add_widget(view)
+    def generate_application_views(self) -> MyRootWidget:
+        root = MyRootWidget()
+        for name in views.data:
+            presenter = views.data[name]["presenter"]()
+            root.add_desktop_view(name, presenter.set_desktop_view(views.data[name]["desktop"](presenter=presenter)))
+            root.add_tablet_view(name, presenter.set_tablet_view(views.data[name]["tablet"](presenter=presenter)))
+            root.add_mobile_view(name, presenter.set_mobile_view(views.data[name]["mobile"](presenter=presenter)))
+        return root
 
 
-if __name__ == "__main__":
-    if __debug__:
-        app = RobonomikCommunicatorHotReload()
-    else:
-        app = RobonomikCommunicator()
-    app.run()
+if __name__ == '__main__' and __debug__:
+    RobonomikCommunicatorHotReload().run()
+elif __name__ == '__main__' and not __debug__:
+    RobonomikCommunicator().run()
