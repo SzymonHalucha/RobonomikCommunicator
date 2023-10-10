@@ -1,0 +1,74 @@
+<MainView>
+    orientation: "vertical"
+    MDTopAppBar:
+        id: top_app_bar
+        title: "Robonomik Communicator"
+
+
+<MainDesktopView>
+    MDLabel:
+        text: "Robonomik Communicator Desktop"
+    SettingsDesktopSubview:
+        MDRaisedButton:
+            text: "Button Desktop"
+            on_release: root.on_release1()
+    ConnectDesktopSubview:
+        MDRaisedButton:
+            text: "Button Desktop"
+            on_release: root.on_release()
+
+<MainTabletView>
+    MDLabel:
+        text: "Robonomik Communicator Tablet"
+    SettingsDesktopSubview:
+        MDRaisedButton:
+            text: "Button Desktop"
+            on_release: root.on_release1()
+    ConnectDesktopSubview:
+        MDRaisedButton:
+            text: "Button Desktop"
+            on_release: root.on_release()
+
+
+<MainMobileView>
+    MDLabel:
+        text: "Robonomik Communicator Mobile"
+    SettingsMobileSubview:
+        MDRaisedButton:
+            text: "Button Mobile"
+            on_release: root.on_release1()
+    ConnectMobileSubview:
+        MDRaisedButton:
+            text: "Button Mobile"
+            on_release: root.on_release()
+
+<ConnectSubview>
+    orientation: "vertical"
+    MDLabel:
+        text: "Connect to Robonomik Communicator"
+
+
+<ConnectDesktopSubview>
+    MDLabel:
+        text: "Connect to Robonomik Communicator Desktop"
+
+
+<ConnectMobileSubview>
+    MDLabel:
+        text: "Connect to Robonomik Communicator Mobile"
+
+
+<SettingsSubview>
+    orientation: "vertical"
+    MDLabel:
+        text: "Settings"
+
+
+<SettingsDesktopSubview>
+    MDLabel:
+        text: "Settings Desktop"
+
+
+<SettingsMobileSubview>
+    MDLabel:
+        text: "Settings Mobile"

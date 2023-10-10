@@ -1,8 +1,8 @@
 from __future__ import annotations
 from kivy.core.window import Window
 from kivymd.tools.hotreload.app import MDApp
-from views.common.dialoger import Dialoger
-from views.common.root import MyRootWidget
+from views.dialoger import Dialoger
+from views.root import MyRootWidget
 from models.messenger import Messenger
 from models.session import Session
 from models.saver import Saver
@@ -39,9 +39,9 @@ class RobonomikCommunicatorHotReload(MDApp):
         root = MyRootWidget()
         for name in views.data:
             presenter = views.data[name]["presenter"](messenger=self.messenger, session=self.session)
-            root.add_desktop_view(name, views.data[name]["desktop"](manager=root, dialoger=self.dialoger, presenter=presenter))
-            root.add_tablet_view(name, views.data[name]["tablet"](manager=root, dialoger=self.dialoger, presenter=presenter))
-            root.add_mobile_view(name, views.data[name]["mobile"](manager=root, dialoger=self.dialoger, presenter=presenter))
+            root.add_desktop_view(views.data[name]["desktop"](name=name, dialoger=self.dialoger, presenter=presenter))
+            root.add_tablet_view(views.data[name]["tablet"](name=name, dialoger=self.dialoger, presenter=presenter))
+            root.add_mobile_view(views.data[name]["mobile"](name=name, dialoger=self.dialoger, presenter=presenter))
         return root
 
     def on_keyboard_down(self, window, keyboard, keycode, text, modifiers):
