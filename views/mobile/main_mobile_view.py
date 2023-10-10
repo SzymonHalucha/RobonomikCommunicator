@@ -6,11 +6,13 @@ import views.common.common
 
 
 class ConnectMobileSubview(MDBoxLayout, BaseSubview):
-    pass
+    def update(self, **kwargs):
+        pass
 
 
 class SettingsMobileSubview(MDBoxLayout, BaseSubview):
-    pass
+    def update(self, **kwargs):
+        pass
 
 
 class MainMobileView(BaseView):

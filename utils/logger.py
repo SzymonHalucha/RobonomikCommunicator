@@ -20,7 +20,7 @@ def init():
 
 
 _logger: logging = None
-# _logger: logging = init()
+_logger: logging = init()
 
 
 def trace_class(cls):

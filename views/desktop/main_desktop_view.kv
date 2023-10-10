@@ -9,9 +9,11 @@
         MyTab:
             title: "Connect"
             ConnectDesktopSubview:
+                id: connect_subview
         MyTab:
             title: "Settings"
             SettingsDesktopSubview:
+                id: settings_subview
 
 
 <ConnectDesktopSubview>
@@ -95,9 +97,28 @@
                 mode: "rectangle"
                 input_filter: 'int'
                 hint_text: "Default Baudrate"
-                # on_focus: app.session.set_param("default_baudrate", int(self.text))
+                on_focus: root.view.on_settings_update("default_baudrate", int(self.text) if self.text != "" and int(self.text) >= 0 else 9600)
             MyTwoLineListItemWithCheckbox:
                 id: show_console_timestamps
                 checkbox_name: "show_console_timestamps"
                 text: "Timestamps"
                 secondary_text: "Show timestamps in the serial console"
+
+
+<MyCreatePresetDialogContent>
+    padding: dp(15)
+    adaptive_height: True
+    orientation: "vertical"
+    MDTextField:
+        id: preset_name
+        hint_text: "Name"
+        mode: "rectangle"
+        multiline: False
+        text: "Example"
+
+
+<MySelectPresetDialogContent>
+    orientation: "vertical"
+    MDScrollView:
+        MDList:
+            id: presets_list
