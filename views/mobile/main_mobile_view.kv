@@ -2,47 +2,19 @@
     orientation: "vertical"
     MDTopAppBar:
         id: top_app_bar
-        title: "Robonomik Communicator Mobile"
+        title: "Robonomik Communicator"
     MDTabs:
         lock_swiping: True
         on_tab_switch: root.on_tab_switch(*args)
         MyTab:
             title: "Connect"
-            ConnectSubview:
-            Connect2Subview:
+            ConnectMobileSubview:
         MyTab:
             title: "Settings"
-            SettingsSubview:
-            Settings2Subview:
+            SettingsMobileSubview:
 
 
-<ConnectSubview>
-    MDLabel:
-        text: "Connect Mobile"
-    MDRaisedButton:
-        text: "Connect2"
-        on_release: root.view_parent.open_subview_by_name("Connect2Subview")
+<ConnectMobileSubview>
 
 
-<Connect2Subview>
-    MDLabel:
-        text: "Connect2 Mobile"
-    MDRaisedButton:
-        text: "Connect"
-        on_release: root.view_parent.open_subview_by_name("ConnectSubview")
-
-
-<SettingsSubview>
-    MDLabel:
-        text: "Settings Mobile"
-    MDRaisedButton:
-        text: "Settings2"
-        on_release: root.view_parent.open_subview_by_name("Settings2Subview")
-
-
-<Settings2Subview>
-    MDLabel:
-        text: "Settings2 Mobile"
-    MDRaisedButton:
-        text: "Settings"
-        on_release: root.view_parent.open_subview_by_name("SettingsSubview")
+<SettingsMobileSubview>

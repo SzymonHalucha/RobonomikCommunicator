@@ -5,26 +5,18 @@ from views.base_view import BaseView
 import views.common.common
 
 
+class ConnectMobileSubview(MDBoxLayout, BaseSubview):
+    pass
+
+
+class SettingsMobileSubview(MDBoxLayout, BaseSubview):
+    pass
+
+
 class MainMobileView(BaseView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.open_subview_by_type(ConnectSubview)
+        self.open_subview_by_type(ConnectMobileSubview)
 
     def on_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
-        self.open_subview_by_name(f"{tab_text}Subview")
-
-
-class ConnectSubview(MDBoxLayout, BaseSubview):
-    pass
-
-
-class Connect2Subview(MDBoxLayout, BaseSubview):
-    pass
-
-
-class SettingsSubview(MDBoxLayout, BaseSubview):
-    pass
-
-
-class Settings2Subview(MDBoxLayout, BaseSubview):
-    pass
+        self.open_subview_by_name(f"{tab_text}MobileSubview")

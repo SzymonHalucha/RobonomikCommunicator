@@ -1,5 +1,7 @@
 from __future__ import annotations
+from kivymd.uix.list import BaseListItem, TwoLineRightIconListItem, IRightBodyTouch
 from kivymd.uix.responsivelayout import MDResponsiveLayout
+from kivymd.uix.selectioncontrol import MDCheckbox
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.tab import MDTabsBase
@@ -7,6 +9,18 @@ from views.base_view import BaseView
 
 
 class MyTab(MDFloatLayout, MDTabsBase):
+    pass
+
+
+class MyListItemWithCheckbox(BaseListItem):
+    pass
+
+
+class MyRightCheckboxContainer(IRightBodyTouch, MDCheckbox):
+    pass
+
+
+class MyTwoLineListItemWithCheckbox(TwoLineRightIconListItem, MyListItemWithCheckbox):
     pass
 
 

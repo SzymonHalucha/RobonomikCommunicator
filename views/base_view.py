@@ -28,7 +28,7 @@ class BaseView(MDBoxLoayout):
             for child in root.children:
                 if isinstance(child, BaseSubview):
                     self._subviews.append(child)
-                    child.view_parent = self
+                    child.view = self
                 find(child)
         find(self)
         if len(self._subviews) > 0:

@@ -5,6 +5,14 @@ from views.base_view import BaseView
 import views.common.common
 
 
+class ConnectDesktopSubview(MDBoxLayout, BaseSubview):
+    pass
+
+
+class SettingsDesktopSubview(MDBoxLayout, BaseSubview):
+    pass
+
+
 class MainDesktopView(BaseView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -13,18 +21,17 @@ class MainDesktopView(BaseView):
     def on_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
         self.open_subview_by_name(f"{tab_text}DesktopSubview")
 
+    def on_ports_list_refresh(self):
+        print("on_ports_list_refresh")
 
-class ConnectDesktopSubview(MDBoxLayout, BaseSubview):
-    pass
+    def on_port_select(self):
+        print("on_port_select")
 
+    def on_preset_create(self):
+        print("on_preset_create")
 
-class Connect2DesktopSubview(MDBoxLayout, BaseSubview):
-    pass
+    def on_preset_select(self):
+        print("on_preset_select")
 
-
-class SettingsDesktopSubview(MDBoxLayout, BaseSubview):
-    pass
-
-
-class Settings2DesktopSubview(MDBoxLayout, BaseSubview):
-    pass
+    def on_preset_delete(self):
+        print("on_preset_delete")

@@ -6,8 +6,8 @@ class BaseSubview(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.is_active: bool = False
-        self.view_parent: Widget = None
         self.static_parent: Widget = None
+        self.view: Widget = None
 
     def open(self):
         if self.static_parent is None:
