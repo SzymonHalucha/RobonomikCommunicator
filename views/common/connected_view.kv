@@ -1,1 +1,81 @@
 <ConnectedView>
+    orientation: "vertical"
+    MDTopAppBar:
+        id: top_app_bar
+        title: "Robonomik Communicator"
+    MDTabs:
+        lock_swiping: True
+        on_tab_switch: root.on_tab_switch(*args)
+        MyTab:
+            title: "Console"
+            ConsoleSubview:
+        MyTab:
+            title: "Layouts"
+            LayoutsSubview:
+        MyTab:
+            title: "Variables"
+            VariablesSubview:
+        MyTab:
+            title: "Layouts Edit"
+            LayoutsEditSubview:
+
+
+<ConsoleSubview>
+    size_hint: .8, .9
+    pos_hint: {"center_x": .5, "center_y": .5}
+    orientation: "vertical"
+    MDScrollView:
+        id: console_scroll
+        scroll_wheel_distance: dp(100)
+        do_scroll_x: False
+        bar_width: dp(10)
+        MDLabel:
+            id: console
+            padding: dp(15)
+            adaptive_height: True
+            font_size: dp(17)
+            line_height: 1.25
+            allow_selection: True
+            allow_copy: True
+            mipmap: True
+            valign: "top"
+            halign: "left"
+    MDTextField:
+        multiline: False
+        mode: "rectangle"
+        hint_text: "Enter message"
+        on_focus: if not self.focused: root.view.on_message_send(self)
+
+
+<LayoutsSubview>
+    MDLabel:
+        text: "Layouts"
+        halign: "center"
+
+
+<LayoutsEditSubview>
+    MDLabel:
+        text: "Layouts Edit"
+        halign: "center"
+
+
+<VariablesSubview>
+    spacing: dp(15)
+    size_hint: .8, .9
+    pos_hint: {"center_x": .5, "center_y": .5}
+    orientation: "vertical"
+    MDBoxLayout:
+        spacing: dp(15)
+        adaptive_size: True
+        pos_hint: {"center_x": .5, "center_y": .5}
+        orientation: "horizontal"
+        MDRaisedButton:
+            text: "Create Variable"
+            on_release: root.view.on_variable_create()
+    MDScrollView:
+        scroll_wheel_distance: dp(100)
+        do_scroll_x: False
+        bar_width: dp(10)
+        MDList:
+            id: variables_list
+            spacing: dp(15)

@@ -71,4 +71,5 @@ class Messenger(Observable):
     def history(self, msg: tuple[str, bool]):
         current_time: str = datetime.now().strftime("%H:%M:%S.%f")[:-3]
         self._history.append((current_time, msg[0], msg[1]))
+        self._history = self._history[-300:]
         self.notify(self._history[-1])

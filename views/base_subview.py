@@ -36,5 +36,5 @@ class BaseSubview(MDBoxLayout):
         self.view = other.view
         self.presenter = other.presenter
         self.is_active = other.is_active
-        self._static_parent = other._static_parent
+        self._static_parent = other._static_parent if other._static_parent is not None else other.parent
         return self

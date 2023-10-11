@@ -39,7 +39,7 @@ class MyRootWidget(MDResponsiveLayout, MDScreen):
         [self._open_view(view) if view.name == name else self._close_view(view) for view in self._current_views]
 
     def open_view_by_type(self, view_type: type):
-        [self._open_view(view) if isinstance(view, view_type) else self._close_view(view) for view in self._current_views]
+        [self._open_view(view) if isinstance(view, view_type) or issubclass(view_type, type(view)) else self._close_view(view) for view in self._current_views]
 
     def update_current_view(self):
         [self._open_view(view) for view in self._current_views if view.is_active]

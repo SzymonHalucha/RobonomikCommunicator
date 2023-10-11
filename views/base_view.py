@@ -1,4 +1,5 @@
 from __future__ import annotations
+from kivymd.uix.tab import MDTabs
 from kivymd.uix.boxlayout import MDBoxLayout
 from presenters.base_presenter import BasePresenter
 from views.base_subview import BaseSubview
@@ -18,7 +19,6 @@ class BaseView(MDBoxLayout):
         self._dialoger: Dialoger = kwargs.get("dialoger", None)
         self._subviews: list[BaseSubview] = []
         self._find_all_subviews()
-        self._replace_all_subviews()
 
     def open(self):
         if len(self._subviews) > 0 and not any(subview.is_active for subview in self._subviews):
@@ -33,7 +33,7 @@ class BaseView(MDBoxLayout):
         [subview.open() if subview.name == subview_name else subview.close() for subview in self._subviews]
 
     def open_subview_by_type(self, subview_type: type):
-        [subview.open() if isinstance(subview, subview_type) or issubclass(subview, subview_type) else subview.close() for subview in self._subviews]
+        [subview.open() if isinstance(subview, subview_type) or issubclass(subview_type, type(subview)) else subview.close() for subview in self._subviews]
 
     def update_current_subview(self):
         [subview.update() for subview in self._subviews if subview.is_active]
@@ -44,13 +44,14 @@ class BaseView(MDBoxLayout):
     def _find_all_subviews(self):
         def find(root):
             for child in root.children:
-                find(child)
-                if isinstance(child, BaseSubview):
+                [find(tab) for tab in child.get_slides()] if isinstance(child, MDTabs) else find(child)
+                if issubclass(type(child), BaseSubview):
                     child.view = self
                     child.presenter = self.presenter
                     self._subviews.append(child)
         find(self)
         self.close()
+        self._replace_all_subviews()
 
     def _replace_all_subviews(self):
         all = inspect.getmembers(sys.modules[self.__module__], inspect.isclass)

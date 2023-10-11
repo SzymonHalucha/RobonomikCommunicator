@@ -79,10 +79,9 @@ class SettingsSubview(BaseSubview):
 
 
 class MyCreatePresetDialogContent(MDBoxLayout):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args)
-        self.name: str = kwargs.get("name", "Default")
-        self.ids.preset_name.text = self.name
+    def __init__(self, preset_name: str = "Default"):
+        super().__init__()
+        self.ids.preset_name.text = preset_name
 
     @property
     def edited(self) -> str:
