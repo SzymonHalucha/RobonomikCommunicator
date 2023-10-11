@@ -21,7 +21,7 @@ class MyRootWidget(MDResponsiveLayout, MDScreen):
             self._current_views = self._tablet_views
         elif args[0] == "mobile":
             self._current_views = self._mobile_views
-        self.open_view_by_index(0) if first else self.update_current_view()
+        self.open_view_by_index(0) if first else self.open_view_by_name(self._view_name)
 
     def add_desktop_view(self, view: BaseView):
         self._desktop_views.append(view)
@@ -43,10 +43,6 @@ class MyRootWidget(MDResponsiveLayout, MDScreen):
 
     def update_current_view(self):
         [self._open_view(view) for view in self._current_views if view.is_active]
-        self.open_view_by_name(self._view_name)
-
-    def get_current_view(self) -> BaseView | None:
-        return next(iter(view for view in self._current_views if view.is_active), None)
 
     def _open_view(self, view: BaseView):
         if view not in self.children:

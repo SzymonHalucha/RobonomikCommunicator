@@ -9,10 +9,6 @@ class MyTab(MDFloatLayout, MDTabsBase):
     pass
 
 
-class MyTwoLineAvatarIconListItem(TwoLineAvatarIconListItem):
-    pass
-
-
 class MyListItemWithCheckbox(BaseListItem):
     pass
 
@@ -22,4 +18,8 @@ class MyRightCheckboxContainer(IRightBodyTouch, MDCheckbox):
 
 
 class MyTwoLineListItemWithCheckbox(TwoLineRightIconListItem, MyListItemWithCheckbox):
+    pass
+
+
+class MyTwoLineAvatarIconListItem(TwoLineAvatarIconListItem):
     pass

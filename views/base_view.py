@@ -3,6 +3,9 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from presenters.base_presenter import BasePresenter
 from views.base_subview import BaseSubview
 from views.dialoger import Dialoger
+import views.root as root
+import inspect
+import sys
 
 
 class BaseView(MDBoxLayout):
@@ -11,34 +14,48 @@ class BaseView(MDBoxLayout):
         self.name = kwargs.get("name", "Default")
         self.is_active: bool = kwargs.get("is_active", False)
         self.presenter: BasePresenter = kwargs.get("presenter", None)
+        self._root: root.MyRootWidget = kwargs.get("root", None)
         self._dialoger: Dialoger = kwargs.get("dialoger", None)
         self._subviews: list[BaseSubview] = []
         self._find_all_subviews()
+        self._replace_all_subviews()
 
-    def open(self, **kwargs):
+    def open(self):
         if len(self._subviews) > 0 and not any(subview.is_active for subview in self._subviews):
-            self._subviews[0].open(**kwargs)
+            self._subviews[0].open()
         self.is_active = True
 
     def close(self):
         [subview.close() for subview in self._subviews]
         self.is_active = False
 
-    def open_subview_by_name(self, subview_name: str, **kwargs):
-        [subview.open(**kwargs) if subview.name == subview_name else subview.close() for subview in self._subviews]
+    def open_subview_by_name(self, subview_name: str):
+        [subview.open() if subview.name == subview_name else subview.close() for subview in self._subviews]
 
-    def open_subview_by_type(self, subview_type: type, **kwargs):
-        [subview.open(**kwargs) if isinstance(subview, subview_type) else subview.close() for subview in self._subviews]
+    def open_subview_by_type(self, subview_type: type):
+        [subview.open() if isinstance(subview, subview_type) or issubclass(subview, subview_type) else subview.close() for subview in self._subviews]
 
-    def update_current_subview(self, **kwargs):
-        [subview.update(**kwargs) for subview in self._subviews if subview.is_active]
+    def update_current_subview(self):
+        [subview.update() for subview in self._subviews if subview.is_active]
 
-    def _find_all_subviews(self, *args):
+    def get_current_subview(self) -> BaseSubview | None:
+        return next((subview for subview in self._subviews if subview.is_active), None)
+
+    def _find_all_subviews(self):
         def find(root):
             for child in root.children:
                 find(child)
                 if isinstance(child, BaseSubview):
-                    self._subviews.append(child)
                     child.view = self
+                    child.presenter = self.presenter
+                    self._subviews.append(child)
         find(self)
         self.close()
+
+    def _replace_all_subviews(self):
+        all = inspect.getmembers(sys.modules[self.__module__], inspect.isclass)
+        classes = [cls for cls in all if not any([isinstance(subview, cls[1]) for subview in self._subviews]) and issubclass(cls[1], BaseSubview)]
+        [[self._replace_subview(subview, cls[1]()) for cls in classes if issubclass(cls[1], type(subview))] for subview in self._subviews]
+
+    def _replace_subview(self, old: BaseSubview, new: BaseSubview):
+        self._subviews[self._subviews.index(old)] = new.copy_from(old)

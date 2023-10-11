@@ -20,8 +20,8 @@ class MainPresenter(BasePresenter):
             "show_console_timestamps": self.session.show_console_timestamps
         }
 
-    def on_settings_update(self, *args):
-        self.session.set_param(args[0], args[1])
+    def on_settings_changed(self, key: str, value):
+        self.session.set_param(key, value)
 
     def on_ports_list_refresh(self, callback: Callable[[list[str, str]], None] = None) -> list[str, str]:
         ports = [(port.device, port.description) for port in serial.tools.list_ports.comports()]
