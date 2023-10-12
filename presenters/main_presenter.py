@@ -23,37 +23,32 @@ class MainPresenter(BasePresenter):
     def on_settings_changed(self, key: str, value):
         self.session.set_param(key, value)
 
-    def on_ports_list_refresh(self, callback: Callable[[list[str, str]], None] = None) -> list[str, str]:
+    def on_ports_list_refresh(self, callback: Callable[[list[tuple[str, str]]], None]) -> list[tuple[str, str]]:
         ports = [(port.device, port.description) for port in serial.tools.list_ports.comports()]
         if callback is not None:
             callback(ports)
         return ports
 
-    def on_port_select(self, port: str, callback: Callable[[None], None] = None):
+    def on_port_select(self, port: str, callback: Callable[[None], None]):
         self.messenger.open(port, self.session.default_baudrate)
-        if callback is not None:
-            callback()
+        callback(None)
 
-    def on_preset_create(self, name: str, callback: Callable[[bool], None] = None):
+    def on_preset_create(self, name: str, callback: Callable[[bool], None]):
         preset = Preset(name=name)
         if self.session.check_if_preset_is_valid(preset):
             self.session.set_current_preset(preset)
             self.session.save_session()
-            if callback is not None:
-                callback(True)
+            callback(True)
         else:
-            if callback is not None:
-                callback(False)
+            callback(False)
 
-    def on_preset_select(self, callback: Callable[[None], None] = None) -> list[tuple[str, Callable[[str], None]]]:
+    def on_preset_select(self, callback: Callable[[None], None]) -> list[tuple[str, Callable[[str], None]]]:
         def on_select(name: str):
             self.session.set_current_preset(self.session.get_preset_by_name(name))
-            if callback is not None:
-                callback()
+            callback(None)
         return [(preset.name, on_select) for preset in self.session.get_presets()]
 
-    def on_preset_delete(self, callback: Callable[[None], None] = None):
+    def on_preset_delete(self, callback: Callable[[None], None]):
         self.session.remove_current_preset()
         self.session.save_session()
-        if callback is not None:
-            callback()
+        callback(None)

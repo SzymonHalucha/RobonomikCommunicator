@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 kivy = "*"
-kivymd = "*"
+kivymd = {ref = "master", git = "git+https://github.com/kivymd/KivyMD.git"}
 pyserial = "*"
 watchdog = "*"
 multitasking = "*"

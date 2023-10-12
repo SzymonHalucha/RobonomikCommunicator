@@ -5,8 +5,8 @@ from utils.serialize import ISerialize
 class Variable(ISerialize):
     def __init__(self, **kwargs):
         self.name: str = kwargs.get("name", "Default")
-        self.type: str = kwargs.get("type", Variable.type()[0])
-        self.direction: str = kwargs.get("direction", Variable.direction()[0])
+        self.type: str = kwargs.get("type", Variable.get_type()[0])
+        self.direction: str = kwargs.get("direction", Variable.get_direction()[0])
         self.interval: int = kwargs.get("interval", 100)
 
     def serialize(self) -> dict:
@@ -24,12 +24,10 @@ class Variable(ISerialize):
         self.interval = dict["interval"]
         return self
 
-    @property
     @staticmethod
-    def type() -> tuple[str, ...]:
+    def get_type() -> tuple[str, ...]:
         return ("Int", "Float", "String")
 
-    @property
     @staticmethod
-    def direction() -> tuple[str, ...]:
+    def get_direction() -> tuple[str, ...]:
         return ("Output", "Input")

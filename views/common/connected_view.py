@@ -1,5 +1,8 @@
 from __future__ import annotations
+from kivy.uix.widget import Widget
 from kivymd.uix.textfield import MDTextField
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import BaseButton
 from kivymd.uix.card import MDCard
 from views.base_view import BaseView
 from views.base_subview import BaseSubview
@@ -18,11 +21,71 @@ class ConnectedView(BaseView):
     def on_message_send(self, instance: MDTextField):
         def on_send(*args):
             instance.text = ""
-            self.get_current_subview().update_console(args)
+            subview = self.get_current_subview()
+            if subview is not None:
+                subview.update_console(*args)
         self.presenter.on_message_send(instance.text, on_send)
 
-    def on_variable_create(self):
-        print("on_variable_create")
+    def on_layout_create(self):
+        def on_create(content):
+            self.presenter.on_layout_create(content.edited, lambda success: self._dialoger.close_dialogs() if success else
+                                            self._dialoger.show_name_error("layout_name", "Layout"))
+            self.update_current_subview()
+        self._dialoger.open_confirm_dialog("Create Layout", MyCreateLayoutDialogContent(), on_create)
+
+    def on_layout_edit(self):
+        print("on_layout_edit")
+
+    def on_layout_select(self):
+        self._dialoger.open_list_dialog("Select Layout", self.presenter.on_layout_select(self.update_current_subview))
+
+    def on_layout_delete(self):
+        def on_delete(*args):
+            self.presenter.on_layout_delete(self._dialoger.close_dialogs)
+            self.update_current_subview()
+        self._dialoger.open_delete_dialog("Delete Layout", "Are you sure you want to delete this layout?", on_delete)
+
+    def on_variable_add(self):
+        self.open_subview_by_type(VariableCreateSubview)
+
+    # TODO: Change to dropdown menu
+    def on_variable_type_click(self, instance: BaseButton):
+        if instance.text == "Int":
+            instance.text = "Float"
+        elif instance.text == "Float":
+            instance.text = "String"
+        else:
+            instance.text = "Int"
+
+    # TODO: Change to dropdown menu
+    def on_variable_direction_click(self, instance: BaseButton):
+        if instance.text == "Input":
+            instance.text = "Output"
+        else:
+            instance.text = "Input"
+
+    def on_variable_edit(self, instance: MyVariableCard):
+        self.open_subview_by_type(VariableCreateSubview)
+        subview = self.get_current_subview()
+        if subview is not None:
+            subview.set_values(instance.variable)
+
+    def on_variable_delete(self, instance: MyVariableCard):
+        def on_delete(*args):
+            self.presenter.on_variable_delete(instance.variable[0], self._dialoger.close_dialogs)
+            self.update_current_subview()
+        self._dialoger.open_delete_dialog("Delete Variable", "Are you sure you want to delete this variable?", on_delete)
+
+    def on_variable_edit_save(self, instance: VariableCreateSubview):
+        self.presenter.on_variable_edit_save(instance.variable, instance.edited, lambda success: self.open_subview_by_type(VariablesSubview)
+                                             if success else instance.show_error())
+
+    def on_variable_save(self, instance: VariableCreateSubview):
+        self.presenter.on_variable_save(instance.edited, lambda success: self.open_subview_by_type(VariablesSubview)
+                                        if success else instance.show_error())
+
+    def on_variable_cancel(self):
+        self.open_subview_by_type(VariablesSubview)
 
 
 class ConsoleSubview(BaseSubview):
@@ -38,7 +101,7 @@ class ConsoleSubview(BaseSubview):
         self.presenter.stop_listen_for_messages_from_serial(self.update)
         super().close()
 
-    def update(self):
+    def update(self, *args):
         self.update_console(self.presenter.get_messages_history())
 
     def update_console(self, history: tuple[list[tuple[str, str, bool]], bool]):
@@ -67,6 +130,11 @@ class LayoutsEditSubview(BaseSubview):
         pass
 
 
+class ControllerCreateSubview(BaseSubview):
+    def update(self):
+        pass
+
+
 class VariablesSubview(BaseSubview):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -76,74 +144,68 @@ class VariablesSubview(BaseSubview):
         self.update_variables_list(self.presenter.get_variables())
 
     def update_variables_list(self, variables: list[tuple[str, str, str, int]]):
-        items = [item for item in self.ids.variables_list.children if isinstance(item, MyVariableCard)]
-        names = [item.name for item in items]
-        [self.ids.variables_list.remove_widget(items[i]) if var[0] not in names else items[i].update_view(var) for i, var in enumerate(variables)]
-        [self.ids.variables_list.add_widget(MyVariableCard(var)) for var in variables if var[0] not in names]
+        self.ids.variables_list.clear_widgets()
+        [self.ids.variables_list.add_widget(MyVariableCard(self.view, var)) for var in variables]
+
+
+class VariableCreateSubview(BaseSubview):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.presenter: connected_presenter.ConnectedPresenter = self.presenter
+
+    def open(self):
+        super().open()
+        self.ids.variable_name.error = False
+        self.ids.variable_name.helper_text = ""
+        self.ids.variable_save.on_release = lambda *x: self.view.on_variable_save(self)
+
+    def update(self):
+        pass
+
+    def show_error(self):
+        self.ids.variable_name.helper_text = "Variable name already exists or is invalid"
+        self.ids.variable_name.error = True
+
+    def set_values(self, values: tuple[str, str, str, int]):
+        self.variable = values
+        self.ids.variable_save.on_release = lambda *x: self.view.on_variable_edit_save(self)
+        self.ids.variable_name.text = values[0]
+        self.ids.variable_type.text = values[1]
+        self.ids.variable_direction.text = values[2]
+        self.ids.variable_interval.text = str(values[3])
+
+    @property
+    def edited(self) -> tuple[str, str, str, int]:
+        return (self.ids.variable_name.text,
+                self.ids.variable_type.text,
+                self.ids.variable_direction.text,
+                int(self.ids.variable_interval.text))
 
 
 class MyVariableCard(MDCard):
-    def __init__(self, variable: tuple[str, str, str, int]):
+    def __init__(self, view: BaseView, variable: tuple[str, str, str, int]):
         super().__init__()
-        self.name: str = variable[0]
+        self.view: BaseView = view
+        self.variable: tuple[str, str, str, int] = variable
         self.update_view(variable)
 
     def update_view(self, variable: tuple[str, str, str, int]):
-        self.id = self.name
+        self.id = self.variable[0]
         self.ids.variable_name.text = f"Name: {variable[0]}"
         self.ids.variable_type.text = f"Type: {variable[1]}"
         self.ids.variable_direction.text = f"Direction: {variable[2]}"
         self.ids.variable_interval.text = f"Refresh: {variable[3]}ms"
 
 
-# class MyBaseVariableDialog(MDBoxLayout):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args)
-#         self.next_type: "MyBaseVariableDialog" = None
-#         self.variable: "Variable" = kwargs["variable"] if "variable" in kwargs else None
-#         if self.variable is not None:
-#             self.ids.variable_name.text = self.variable.name
-#             self.ids.variable_type.text = self.variable.type
-#             self.ids.variable_direction.text = self.variable.direction
-#             self.ids.variable_interval.text = str(self.variable.interval)
+class MyCreateLayoutDialogContent(MDBoxLayout):
+    def __init__(self, layout_name: str = "Default"):
+        super().__init__()
+        self.ids.layout_name.text = layout_name
 
-#     @property
-#     def edited_variable(self) -> "Variable":
-#         return Variable(name=self.ids.variable_name.text,
-#                         type=self.ids.variable_type.text,
-#                         direction=self.ids.variable_direction.text,
-#                         interval=int(self.ids.variable_interval.text if "variable_interval" in self.ids else "0"))
-
-#     def on_variable_direction_click(self):
-#         self.ids.variable_direction.text = "Input" if self.ids.variable_direction.text == "Output" else "Output"
-
-#     def on_variable_type_click(self):
-#         MDApp.get_running_app().on_create_variable(self.next_type())
+    @property
+    def edited(self) -> str:
+        return self.ids.layout_name.text
 
 
-# class MyTriggerVariableDialog(MyBaseVariableDialog):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.next_type: "MyBaseVariableDialog" = MyIntVariableDialog
-#         self.ids.variable_type.text = "Trigger"
-
-
-# class MyIntVariableDialog(MyBaseVariableDialog):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.next_type: "MyBaseVariableDialog" = MyFloatVariableDialog
-#         self.ids.variable_type.text = "Int"
-
-
-# class MyFloatVariableDialog(MyBaseVariableDialog):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.next_type: "MyBaseVariableDialog" = MyStringVariableDialog
-#         self.ids.variable_type.text = "Float"
-
-
-# class MyStringVariableDialog(MyBaseVariableDialog):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.next_type: "MyBaseVariableDialog" = MyTriggerVariableDialog
-#         self.ids.variable_type.text = "String"
+class MySelectLayoutDialogContent(MDBoxLayout):
+    pass

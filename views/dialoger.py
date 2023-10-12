@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ast import arg
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
@@ -11,13 +12,13 @@ from typing import Callable
 
 class Dialoger:
     def __init__(self):
-        self._confirm_dialog: MDDialog = None
-        self._delete_dialog: MDDialog = None
-        self._list_dialog: MDDialog = None
+        self._confirm_dialog: MDDialog
+        self._delete_dialog: MDDialog
+        self._list_dialog: MDDialog
         self.initialize_dialogs()
 
-    def show_text_field_error(self, id: str, error: str):
-        self._confirm_dialog.content_cls.ids[id].helper_text = f"{error}"
+    def show_name_error(self, id: str, item_name: str):
+        self._confirm_dialog.content_cls.ids[id].helper_text = f"{item_name} name already exists or is invalid"
         self._confirm_dialog.content_cls.ids[id].error = True
         self._show_input_error = True
 
@@ -30,12 +31,12 @@ class Dialoger:
             MDRaisedButton(text="DELETE")])
         self._list_dialog = MDDialog(title="Select", type="simple")
 
-    def close_dialogs(self, ignore_dialog: MDDialog = None):
-        if self._confirm_dialog is not ignore_dialog:
+    def close_dialogs(self, *args) -> None:
+        if len(args) <= 0 or self._confirm_dialog is not args[0]:
             self._confirm_dialog.dismiss()
-        if self._delete_dialog is not ignore_dialog:
+        if len(args) <= 0 or self._delete_dialog is not args[0]:
             self._delete_dialog.dismiss()
-        if self._list_dialog is not ignore_dialog:
+        if len(args) <= 0 or self._list_dialog is not args[0]:
             self._list_dialog.dismiss()
 
     def open_confirm_dialog(self, title: str, content: MDBoxLayout, on_confirm: Callable[[Widget], None], **kwargs):
@@ -61,7 +62,7 @@ class Dialoger:
         self._delete_dialog.title = title
         self._delete_dialog.text = text
         self._delete_dialog.buttons[0].on_release = lambda *x: on_cancel()
-        self._delete_dialog.buttons[1].on_release = lambda *x: on_delete()
+        self._delete_dialog.buttons[1].on_release = lambda *x: on_delete(None)
         Clock.schedule_once(self._delete_dialog.update_width)
         self._delete_dialog.open()
 

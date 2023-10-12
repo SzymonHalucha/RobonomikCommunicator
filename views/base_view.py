@@ -35,7 +35,7 @@ class BaseView(MDBoxLayout):
     def open_subview_by_type(self, subview_type: type):
         [subview.open() if isinstance(subview, subview_type) or issubclass(subview_type, type(subview)) else subview.close() for subview in self._subviews]
 
-    def update_current_subview(self):
+    def update_current_subview(self, *args):
         [subview.update() for subview in self._subviews if subview.is_active]
 
     def get_current_subview(self) -> BaseSubview | None:

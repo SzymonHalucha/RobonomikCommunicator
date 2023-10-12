@@ -2,13 +2,14 @@ from __future__ import annotations
 from kivy.uix.widget import Widget
 from kivymd.uix.boxlayout import MDBoxLayout
 from presenters.base_presenter import BasePresenter
+import views.base_view as base_view
 
 
 class BaseSubview(MDBoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.name: str = self.__class__.__name__
-        self.view: Widget = None
+        self.view: base_view.BaseView = None
         self.presenter: BasePresenter = None
         self.is_active: bool = False
         self._static_parent: Widget = None

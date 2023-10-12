@@ -15,9 +15,7 @@
         MyTab:
             title: "Variables"
             VariablesSubview:
-        MyTab:
-            title: "Layouts Edit"
-            LayoutsEditSubview:
+            VariableCreateSubview:
 
 
 <ConsoleSubview>
@@ -26,7 +24,9 @@
     orientation: "vertical"
     MDScrollView:
         id: console_scroll
-        scroll_wheel_distance: dp(100)
+        always_overscroll: False
+        smooth_scroll_end: 5
+        scroll_wheel_distance: dp(125)
         do_scroll_x: False
         bar_width: dp(10)
         MDLabel:
@@ -48,9 +48,37 @@
 
 
 <LayoutsSubview>
+    spacing: dp(15)
+    size_hint: .95, .95
+    pos_hint: {"center_x": .5, "center_y": .5}
+    orientation: "vertical"
     MDLabel:
-        text: "Layouts"
+        id: layout_name
+        adaptive_height: True
+        pos_hint: {"center_x": .5, "center_y": .5}
+        text: "Layout: Example 1"
+        font_style: "H5"
         halign: "center"
+    MDBoxLayout:
+        spacing: dp(15)
+        adaptive_size: True
+        pos_hint: {"center_x": .5, "center_y": .5}
+        orientation: "horizontal"
+        MDRectangleFlatButton:
+            text: "Create Layout"
+            on_release: root.view.on_layout_create()
+        MDRaisedButton:
+            text: "Edit Layout"
+            on_release: root.view.on_layout_edit()
+        MDRectangleFlatButton:
+            text: "Select Layout"
+            on_release: root.view.on_layout_select()
+        MDRectangleFlatButton:
+            text: "Delete Layout"
+            on_release: root.view.on_layout_delete()
+    MDFloatLayout:
+        id: controllers_board
+        do_rotation: False
 
 
 <LayoutsEditSubview>
@@ -70,12 +98,125 @@
         pos_hint: {"center_x": .5, "center_y": .5}
         orientation: "horizontal"
         MDRaisedButton:
-            text: "Create Variable"
-            on_release: root.view.on_variable_create()
+            text: "Add Variable"
+            on_release: root.view.on_variable_add()
     MDScrollView:
-        scroll_wheel_distance: dp(100)
+        always_overscroll: False
+        smooth_scroll_end: 5
+        scroll_wheel_distance: dp(75)
         do_scroll_x: False
         bar_width: dp(10)
         MDList:
             id: variables_list
             spacing: dp(15)
+            padding: 0, 0, dp(15), 0
+
+
+<VariableCreateSubview>
+    spacing: dp(15)
+    size_hint: .8, .9
+    pos_hint: {"center_x": .5, "center_y": .5}
+    orientation: "vertical"
+    MDBoxLayout:
+        spacing: dp(15)
+        adaptive_size: True
+        pos_hint: {"center_x": .5, "center_y": .5}
+        orientation: "horizontal"
+        MDRaisedButton:
+            id: variable_save
+            text: "Save"
+            helper_text_mode: "persistent"
+        MDRectangleFlatButton:
+            text: "Cancel"
+            on_release: root.view.on_variable_cancel()
+    MDScrollView:
+        always_overscroll: False
+        smooth_scroll_end: 5
+        scroll_wheel_distance: dp(75)
+        do_scroll_x: False
+        bar_width: dp(10)
+        MDList:
+            spacing: dp(25)
+            padding: 0, 0, dp(15), 0
+            MDTextField:
+                id: variable_name
+                multiline: False
+                required: True
+                mode: "rectangle"
+                hint_text: "Variable name"
+                text: "Example"
+            MDRaisedButton:
+                id: variable_type
+                size_hint_x: 1
+                text: "Int"
+                on_release: root.view.on_variable_type_click(self)
+            MDRaisedButton:
+                id: variable_direction
+                size_hint_x: 1
+                text: "Input"
+                on_release: root.view.on_variable_direction_click(self)
+            MDTextField:
+                id: variable_interval
+                multiline: False
+                required: True
+                mode: "rectangle"
+                filter: "float"
+                hint_text: "Interval (milliseconds)"
+                text: "100"
+
+
+<MyVariableCard>
+    padding: dp(10)
+    size_hint: 1, None
+    height: dp(120)
+    MDBoxLayout:
+        orientation: "vertical"
+        MDBoxLayout:
+            spacing: dp(15)
+            orientation: "horizontal"
+            MDRaisedButton:
+                text: "Edit"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_release: root.view.on_variable_edit(root)
+            MDRectangleFlatButton:
+                text: "Delete"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_release: root.view.on_variable_delete(root)
+            MDLabel:
+                id: variable_name
+                pos_hint: {"center_x": .5, "center_y": .5}
+                text: "Name: Example 1"
+                bold: True
+        MDBoxLayout:
+            orientation: "horizontal"
+            MDLabel:
+                id: variable_type
+                pos_hint: {"center_x": .5, "center_y": .5}
+                text: "Type: Int"
+            MDLabel:
+                id: variable_direction 
+                pos_hint: {"center_x": .5, "center_y": .5}
+                text: "Direction: Output"
+            MDLabel:
+                id: variable_interval
+                pos_hint: {"center_x": .5, "center_y": .5}
+                text: "Refresh: 100ms"
+
+
+<MyCreateLayoutDialogContent>
+    padding: dp(15)
+    adaptive_height: True
+    orientation: "vertical"
+    MDTextField:
+        id: layout_name
+        hint_text: "Name"
+        mode: "rectangle"
+        multiline: False
+        text: "Example"
+
+
+<MySelectLayoutDialogContent>
+    orientation: "vertical"
+    MDScrollView:
+        MDList:
+            id: layouts_list

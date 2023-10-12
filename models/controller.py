@@ -36,7 +36,6 @@ class Controller(ISerialize):
         self.size = dict["size"]
         return self
 
-    @property
     @staticmethod
     def type() -> tuple[str, ...]:
-        return ("Button", "Slider", "Switch", "Input")
+        return ("Button", "Switch", "Slider", "Text Input")

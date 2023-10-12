@@ -1,4 +1,5 @@
 from __future__ import annotations
+from asyncio.windows_events import NULL
 from kivymd.uix.boxlayout import MDBoxLayout
 from views.base_view import BaseView
 from views.base_subview import BaseSubview
@@ -16,21 +17,25 @@ class MainView(BaseView):
         self.open_subview_by_name(f"{tab_text}Subview")
 
     def on_ports_list_refresh(self):
-        self.presenter.on_ports_list_refresh(self.get_current_subview().update_ports)
+        def on_refresh(*args):
+            subview = self.get_current_subview()
+            if subview is not None:
+                subview.update_ports(*args)
+        self.presenter.on_ports_list_refresh(on_refresh)
 
     def on_port_select(self, port: str):
-        self.presenter.on_port_select(port, lambda: self._root.open_view_by_type(connected_view.ConnectedView))
+        self.presenter.on_port_select(port, lambda x: self._root.open_view_by_type(connected_view.ConnectedView))
 
     def on_preset_create(self):
-        def on_confirm(content: MyCreatePresetDialogContent):
+        def on_create(content):
             self.presenter.on_preset_create(content.edited, lambda success: self._dialoger.close_dialogs() if success
-                                            else self._dialoger.show_text_field_error("preset_name", "Preset name is not valid"))
+                                            else self._dialoger.show_name_error("preset_name", "Preset"))
             self.update_current_subview()
-        self._dialoger.open_confirm_dialog("Create Preset", MyCreatePresetDialogContent(), on_confirm)
+        self._dialoger.open_confirm_dialog("Create Preset", MyCreatePresetDialogContent(), on_create)
 
     def on_preset_delete(self):
-        def on_delete():
-            self.presenter.on_preset_delete(self._dialoger.close_dialogs())
+        def on_delete(*args):
+            self.presenter.on_preset_delete(self._dialoger.close_dialogs)
             self.update_current_subview()
         self._dialoger.open_delete_dialog("Delete Preset", "Are you sure you want to delete this preset?", on_delete)
 
@@ -47,9 +52,9 @@ class ConnectSubview(BaseSubview):
         self.presenter: main_presenter.MainPresenter = self.presenter
 
     def update(self):
-        self.update_ports(self.presenter.on_ports_list_refresh())
+        self.update_ports(self.presenter.on_ports_list_refresh(lambda *x: None))
 
-    def update_ports(self, ports: list[str, str]):
+    def update_ports(self, ports: list[tuple[str, str]]):
         items = [item for item in self.ids.ports_list.children if isinstance(item, common.MyTwoLineAvatarIconListItem)]
         items_names = [item.text for item in items]
         ports_names = [port[0] for port in ports]
