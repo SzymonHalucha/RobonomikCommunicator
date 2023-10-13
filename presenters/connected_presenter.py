@@ -28,10 +28,14 @@ class ConnectedPresenter(BasePresenter):
     def stop_listen_for_messages_from_serial(self, callback: Callable):
         self.messenger.unsubscribe(callback)
 
+    def get_current_layout(self) -> tuple[str, list[dict]]:
+        ctrls = [ctrl.serialize() for ctrl in self.session.get_controllers()]
+        return (self.session.get_current_layout().name, ctrls)
+
     def on_layout_create(self, layout_name: str, callback: Callable[[bool], None]):
         layout = Layout(name=layout_name)
         if self.session.check_if_layout_is_valid(layout):
-            self.session.add_layout(layout)
+            self.session.set_current_layout(layout)
             self.session.save_session()
             callback(True)
         else:
@@ -48,8 +52,8 @@ class ConnectedPresenter(BasePresenter):
         self.session.save_session()
         callback(None)
 
-    def get_variables(self) -> list[tuple[str, str, str, int]]:
-        return [(var.name, var.type, var.direction, var.interval) for var in self.session.get_variables()]
+    def get_variables(self) -> list[dict]:
+        return [var.serialize() for var in self.session.get_variables()]
 
     def on_variable_save(self, variable: tuple[str, str, str, int], callback: Callable[[bool], None]):
         var = Variable(name=variable[0], type=variable[1], direction=variable[2], interval=variable[3])

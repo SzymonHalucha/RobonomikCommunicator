@@ -31,7 +31,7 @@ class Dialoger:
             MDRaisedButton(text="DELETE")])
         self._list_dialog = MDDialog(title="Select", type="simple")
 
-    def close_dialogs(self, *args) -> None:
+    def close_dialogs(self, *args):
         if len(args) <= 0 or self._confirm_dialog is not args[0]:
             self._confirm_dialog.dismiss()
         if len(args) <= 0 or self._delete_dialog is not args[0]:

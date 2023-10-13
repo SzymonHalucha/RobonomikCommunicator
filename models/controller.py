@@ -37,5 +37,5 @@ class Controller(ISerialize):
         return self
 
     @staticmethod
-    def type() -> tuple[str, ...]:
+    def get_type() -> tuple[str, ...]:
         return ("Button", "Switch", "Slider", "Text Input")

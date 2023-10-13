@@ -12,6 +12,8 @@
         MyTab:
             title: "Layouts"
             LayoutsSubview:
+            LayoutsEditSubview:
+            ControllerCreateSubview:
         MyTab:
             title: "Variables"
             VariablesSubview:
@@ -82,9 +84,34 @@
 
 
 <LayoutsEditSubview>
+    spacing: dp(15)
+    size_hint: .95, .95
+    pos_hint: {"center_x": .5, "center_y": .5}
+    orientation: "vertical"
     MDLabel:
-        text: "Layouts Edit"
+        id: layout_name
+        adaptive_height: True
+        pos_hint: {"center_x": .5, "center_y": .5}
+        text: "Edit Layout: Example 1"
+        font_style: "H5"
         halign: "center"
+    MDBoxLayout:
+        spacing: dp(15)
+        adaptive_size: True
+        pos_hint: {"center_x": .5, "center_y": .5}
+        orientation: "horizontal"
+        MDRaisedButton:
+            text: "Save Layout"
+            on_release: root.view.on_layout_save()
+        MDRaisedButton:
+            text: "Add Controller"
+            on_release: root.view.on_controller_add()
+        MDRectangleFlatButton:
+            text: "Cancel"
+            on_release: root.view.on_layout_cancel()
+    MDFloatLayout:
+        id: controllers_board
+        do_rotation: False
 
 
 <VariablesSubview>
@@ -165,6 +192,98 @@
                 text: "100"
 
 
+<ControllerCreateSubview>
+    spacing: dp(15)
+    size_hint: .8, .9
+    pos_hint: {"center_x": .5, "center_y": .5}
+    orientation: "vertical"
+    MDBoxLayout:
+        spacing: dp(15)
+        adaptive_size: True
+        pos_hint: {"center_x": .5, "center_y": .5}
+        orientation: "horizontal"
+        MDRaisedButton:
+            id: controller_save
+            text: "Save"
+            helper_text_mode: "persistent"
+        MDRectangleFlatButton:
+            text: "Cancel"
+            on_release: root.view.on_controller_cancel()
+    MDScrollView:
+        always_overscroll: False
+        smooth_scroll_end: 5
+        scroll_wheel_distance: dp(75)
+        do_scroll_x: False
+        bar_width: dp(10)
+        MDList:
+            spacing: dp(25)
+            padding: 0, 0, dp(15), 0
+            MDTextField:
+                id: controller_name
+                multiline: False
+                required: True
+                mode: "rectangle"
+                hint_text: "Controller name"
+                text: "Example"
+            MDTextField:
+                id: controller_variable
+                multiline: False
+                required: True
+                mode: "rectangle"
+                hint_text: "Variable name"
+                text: "Example"
+            MDTextField:
+                id: controller_custom_name
+                hint_text: "Custom help text"
+                mode: "rectangle"
+                multiline: False
+                text: "Click Me!"
+            MDRaisedButton:
+                id: controller_type
+                size_hint_x: 1
+                text: "Button"
+                on_release: root.view.on_controller_type_click(self)
+            MDRaisedButton:
+                id: controller_direction
+                size_hint_x: 1
+                text: "Input"
+                on_release: root.view.on_controller_direction_click(self)
+            MDBoxLayout:
+                spacing: dp(15)
+                adaptive_height: True
+                orientation: "horizontal"
+                MDTextField:
+                    id: controller_width
+                    hint_text: "Width"
+                    mode: "rectangle"
+                    multiline: False
+                    input_filter: "int"
+                    text: "200"
+                MDTextField:
+                    id: controller_height
+                    hint_text: "Height"
+                    mode: "rectangle"
+                    multiline: False
+                    text: "200"
+                    input_filter: "int"
+            MDBoxLayout:
+                spacing: dp(15)
+                adaptive_height: True
+                orientation: "horizontal"
+                MDTextField:
+                    id: controller_start_state
+                    hint_text: "Off State Value"
+                    mode: "rectangle"
+                    multiline: False
+                    text: "False"
+                MDTextField:
+                    id: controller_end_state
+                    hint_text: "On State Value"
+                    mode: "rectangle"
+                    multiline: False
+                    text: "True"
+
+
 <MyVariableCard>
     padding: dp(10)
     size_hint: 1, None
@@ -201,6 +320,206 @@
                 id: variable_interval
                 pos_hint: {"center_x": .5, "center_y": .5}
                 text: "Refresh: 100ms"
+
+
+<MyBaseControllerCardTemplate@MDFloatLayout>
+    MDAnchorLayout:
+        id: controller_top
+        padding: dp(5), 0, 0, 0
+        anchor_x: "left"
+        anchor_y: "top"
+        pos: self.parent.pos
+        size_hint: 1, None
+        height: dp(40)
+        pos_hint: {"center_x": .5, "top": 1}
+        MDLabel:
+            id: controller_name
+            size_hint: None, None
+            size: self.parent.size
+            pos: self.parent.pos
+            text: "Base Controller"
+            valign: "center"
+
+
+<MyButtonControllerCard>
+    size_hint: None, None
+    MyBaseControllerCardTemplate:
+        MDAnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+            pos: self.parent.pos
+            size_hint: 1, 1
+            MDRaisedButton:
+                text: "Button"
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+
+<MySwitchControllerCard>
+    size_hint: None, None
+    MyBaseControllerCardTemplate:
+        MDAnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+            pos: self.parent.pos
+            size_hint: 1, 1
+            MDSwitch:
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+
+<MySliderControllerCard>
+    size_hint: None, None
+    MyBaseControllerCardTemplate:
+        MDAnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+            pos: self.parent.pos
+            size_hint: 1, 1
+            MDSlider:
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+
+<MyTextInputControllerCard>
+    size_hint: None, None
+    MyBaseControllerCardTemplate:
+        MDAnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+            pos: self.parent.pos
+            size_hint: 1, 1
+            MDTextField:
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+
+<MyBaseControllerEditCardTemplate@MDFloatLayout>
+    MDAnchorLayout:
+        id: controller_top
+        padding: dp(5), 0, 0, 0
+        anchor_x: "left"
+        anchor_y: "top"
+        pos: self.parent.pos
+        size_hint: 1, None
+        height: dp(40)
+        pos_hint: {"center_x": .5, "top": 1}
+        MDLabel:
+            id: controller_name
+            size_hint: None, None
+            size: self.parent.size
+            pos: self.parent.pos
+            text: "Base Controller"
+            valign: "center"
+    MDAnchorLayout:
+        id: controller_buttons
+        anchor_x: "right"
+        anchor_y: "top"
+        pos: self.parent.pos
+        size_hint: 1, None
+        height: dp(40)
+        pos_hint: {"center_x": .5, "top": 1}
+        MDBoxLayout:
+            padding: dp(5)
+            spacing: dp(5)
+            adaptive_size: True
+            orientation: "horizontal"
+            MDIconButton:
+                _default_icon_pad: dp(10)
+                _radius: dp(5)
+                icon_size: dp(20)
+                rounded_button: False
+                icon: "delete"
+                on_release: root.view.on_controller_delete(root)
+            MDIconButton:
+                _default_icon_pad: dp(10)
+                _radius: dp(5)
+                icon_size: dp(20)
+                rounded_button: False
+                icon: "dots-vertical"
+                md_bg_color: app.theme_cls.primary_color
+                on_release: root.view.on_controller_edit(root)
+    MDAnchorLayout:
+        id: controller_bottom
+        anchor_x: "left"
+        anchor_y: "bottom"
+        pos: self.parent.pos
+        size_hint: 1, None
+        height: dp(20)
+        pos_hint: {"center_x": .5, "bottom": 1}
+        MDBoxLayout:
+            padding: dp(5), 0, 0, dp(5)
+            adaptive_size: True
+            orientation: "horizontal"
+            MDLabel:
+                id: controller_type
+                adaptive_size: True
+                text: "Base Controller"
+                theme_text_color: "Secondary"
+                font_style: "Caption"
+            MDLabel:
+                id: controller_variable 
+                adaptive_size: True
+                text: "Base Controller"
+                theme_text_color: "Secondary"
+                font_style: "Caption"
+
+
+<MyButtonControllerEditCard>
+    drag_rectangle: self.x, self.y, self.width, self.height
+    drag_timeout: 10000000
+    drag_distance: 0
+    MyBaseControllerEditCardTemplate:
+        MDAnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+            pos: self.parent.pos
+            size_hint: 1, 1
+            MDRaisedButton:
+                text: "Trigger"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                disabled: True
+
+
+<MySwitchControllerEditCard>
+    drag_rectangle: self.x, self.y, self.width, self.height
+    drag_timeout: 10000000
+    drag_distance: 0
+    MyBaseControllerEditCardTemplate:
+        MDAnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+            pos: self.parent.pos
+            size_hint: 1, 1
+            MDSwitch:
+                pos_hint: {"center_x": .5, "center_y": .5}
+                disabled: True
+
+
+<MySliderControllerEditCard>
+    drag_rectangle: self.x, self.y, self.width, self.height
+    drag_timeout: 10000000
+    drag_distance: 0
+    MyBaseControllerEditCardTemplate:
+        MDAnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+            pos: self.parent.pos
+            size_hint: 1, 1
+            MDSlider:
+                pos_hint: {"center_x": .5, "center_y": .5}
+                disabled: True
+
+
+<MyTextInputControllerEditCard>
+    drag_rectangle: self.x, self.y, self.width, self.height
+    drag_timeout: 10000000
+    drag_distance: 0
+    MyBaseControllerEditCardTemplate:
+        MDAnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+            pos: self.parent.pos
+            size_hint: 1, 1
+            MDTextField:
+                pos_hint: {"center_x": .5, "center_y": .5}
+                disabled: True
 
 
 <MyCreateLayoutDialogContent>
