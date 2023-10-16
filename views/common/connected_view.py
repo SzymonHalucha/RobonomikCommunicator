@@ -187,7 +187,7 @@ class LayoutsSubview(BaseSubview):
         self.ids.controllers_board.clear_widgets()
         for controller in layout["controllers"]:
             class_name = f"My{controller['type'].replace(' ', '')}ControllerCard"
-            self.ids.controllers_board.add_widget(getattr(sys.modules[__name__], class_name)(controller=controller))
+            self.ids.controllers_board.add_widget(getattr(common, class_name)(controller=controller))
 
 
 class LayoutsEditSubview(BaseSubview):
@@ -203,7 +203,7 @@ class LayoutsEditSubview(BaseSubview):
         self.ids.controllers_board.clear_widgets()
         for controller in layout["controllers"]:
             class_name = f"My{controller['type'].replace(' ', '')}ControllerEditCard"
-            self.ids.controllers_board.add_widget(getattr(sys.modules[__name__], class_name)(controller=controller, view=self.view))
+            self.ids.controllers_board.add_widget(getattr(common, class_name)(controller=controller, view=self.view))
 
 
 class ControllerCreateSubview(BaseSubview):

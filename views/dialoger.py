@@ -1,5 +1,4 @@
 from __future__ import annotations
-from ast import arg
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.uix.widget import Widget

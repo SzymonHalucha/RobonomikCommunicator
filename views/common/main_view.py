@@ -1,5 +1,4 @@
 from __future__ import annotations
-from kivymd.uix.boxlayout import MDBoxLayout
 from views.base_view import BaseView
 from views.base_subview import BaseSubview
 import presenters.main_presenter as main_presenter

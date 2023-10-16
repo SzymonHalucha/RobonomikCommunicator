@@ -79,7 +79,7 @@
         MDRectangleFlatButton:
             text: "Delete Layout"
             on_release: root.view.on_layout_delete()
-    MDFloatLayout:
+    MDRelativeLayout:
         id: controllers_board
         do_rotation: False
 
@@ -108,11 +108,15 @@
             text: "Add Controller"
             on_release: root.view.on_controller_add()
         MDRectangleFlatButton:
+            text: "Layout Version"
+            on_release: root.view.on_layout_version()
+        MDRectangleFlatButton:
             text: "Cancel"
             on_release: root.view.on_layout_cancel()
-    MDFloatLayout:
+    ScatterLayout:
         id: controllers_board
         do_rotation: False
+        do_translation: False
 
 
 <VariablesSubview>

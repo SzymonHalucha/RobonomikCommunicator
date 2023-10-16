@@ -53,13 +53,12 @@
                 text: "Refresh: 100ms"
 
 
-<MyBaseControllerCardTemplate@MDFloatLayout>
+<MyBaseControllerCardTemplate@MDRelativeLayout>
     MDAnchorLayout:
         id: controller_top
         padding: dp(5), 0, 0, 0
         anchor_x: "left"
         anchor_y: "top"
-        pos: self.parent.pos
         size_hint: 1, None
         height: dp(40)
         pos_hint: {"center_x": .5, "top": 1}
@@ -67,7 +66,6 @@
             id: controller_name
             size_hint: None, None
             size: self.parent.size
-            pos: self.parent.pos
             text: "Base Controller"
             valign: "center"
 
@@ -78,7 +76,6 @@
         MDAnchorLayout:
             anchor_x: "center"
             anchor_y: "center"
-            pos: self.parent.pos
             size_hint: 1, 1
             MDRaisedButton:
                 text: "Button"
@@ -91,7 +88,6 @@
         MDAnchorLayout:
             anchor_x: "center"
             anchor_y: "center"
-            pos: self.parent.pos
             size_hint: 1, 1
             MDSwitch:
                 pos_hint: {"center_x": .5, "center_y": .5}
@@ -103,7 +99,6 @@
         MDAnchorLayout:
             anchor_x: "center"
             anchor_y: "center"
-            pos: self.parent.pos
             size_hint: 1, 1
             MDSlider:
                 pos_hint: {"center_x": .5, "center_y": .5}
@@ -115,19 +110,17 @@
         MDAnchorLayout:
             anchor_x: "center"
             anchor_y: "center"
-            pos: self.parent.pos
             size_hint: 1, 1
             MDTextField:
                 pos_hint: {"center_x": .5, "center_y": .5}
 
 
-<MyBaseControllerEditCardTemplate@MDFloatLayout>
+<MyBaseControllerEditCardTemplate@MDRelativeLayout>
     MDAnchorLayout:
         id: controller_top
         padding: dp(5), 0, 0, 0
         anchor_x: "left"
         anchor_y: "top"
-        pos: self.parent.pos
         size_hint: 1, None
         height: dp(40)
         pos_hint: {"center_x": .5, "top": 1}
@@ -135,14 +128,12 @@
             id: controller_name
             size_hint: None, None
             size: self.parent.size
-            pos: self.parent.pos
             text: "Base Controller"
             valign: "center"
     MDAnchorLayout:
         id: controller_buttons
         anchor_x: "right"
         anchor_y: "top"
-        pos: self.parent.pos
         size_hint: 1, None
         height: dp(40)
         pos_hint: {"center_x": .5, "top": 1}
@@ -170,7 +161,6 @@
         id: controller_bottom
         anchor_x: "left"
         anchor_y: "bottom"
-        pos: self.parent.pos
         size_hint: 1, None
         height: dp(20)
         pos_hint: {"center_x": .5, "bottom": 1}
@@ -201,7 +191,6 @@
         MDAnchorLayout:
             anchor_x: "center"
             anchor_y: "center"
-            pos: self.parent.pos
             size_hint: 1, 1
             MDRaisedButton:
                 text: "Button"
@@ -218,7 +207,6 @@
         MDAnchorLayout:
             anchor_x: "center"
             anchor_y: "center"
-            pos: self.parent.pos
             size_hint: 1, 1
             MDSwitch:
                 pos_hint: {"center_x": .5, "center_y": .5}
@@ -234,7 +222,6 @@
         MDAnchorLayout:
             anchor_x: "center"
             anchor_y: "center"
-            pos: self.parent.pos
             size_hint: 1, 1
             MDSlider:
                 pos_hint: {"center_x": .5, "center_y": .5}
@@ -250,7 +237,6 @@
         MDAnchorLayout:
             anchor_x: "center"
             anchor_y: "center"
-            pos: self.parent.pos
             size_hint: 1, 1
             MDTextField:
                 pos_hint: {"center_x": .5, "center_y": .5}
