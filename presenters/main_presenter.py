@@ -29,26 +29,23 @@ class MainPresenter(BasePresenter):
             callback(ports)
         return ports
 
-    def on_port_select(self, port: str, callback: Callable[[None], None]):
+    def on_port_select(self, port: str):
         self.messenger.open(port, self.session.default_baudrate)
-        callback(None)
 
     def on_preset_create(self, name: str, callback: Callable[[bool], None]):
-        preset = Preset(name=name)
-        if self.session.check_if_preset_is_valid(preset):
-            self.session.set_current_preset(preset)
+        if self.session.check_if_preset_name_is_valid(name):
+            self.session.set_current_preset(Preset(name=name))
             self.session.save_session()
             callback(True)
         else:
             callback(False)
 
-    def on_preset_select(self, callback: Callable[[None], None]) -> list[tuple[str, Callable[[str], None]]]:
-        def on_select(name: str):
-            self.session.set_current_preset(self.session.get_preset_by_name(name))
+    def on_preset_select(self, callback: Callable[[None], None]) -> list[tuple[str, str, Callable[[str], None]]]:
+        def on_select(content):
+            self.session.set_current_preset(self.session.get_preset_by_id(content.id))
             callback(None)
-        return [(preset.name, on_select) for preset in self.session.get_presets()]
+        return [(preset.name, preset.id, on_select) for preset in self.session.get_presets().values()]
 
-    def on_preset_delete(self, callback: Callable[[None], None]):
+    def on_preset_delete(self):
         self.session.remove_current_preset()
         self.session.save_session()
-        callback(None)

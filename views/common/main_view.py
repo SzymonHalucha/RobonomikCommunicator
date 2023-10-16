@@ -1,5 +1,4 @@
 from __future__ import annotations
-from asyncio.windows_events import NULL
 from kivymd.uix.boxlayout import MDBoxLayout
 from views.base_view import BaseView
 from views.base_subview import BaseSubview
@@ -24,18 +23,20 @@ class MainView(BaseView):
         self.presenter.on_ports_list_refresh(on_refresh)
 
     def on_port_select(self, port: str):
-        self.presenter.on_port_select(port, lambda x: self._root.open_view_by_type(connected_view.ConnectedView))
+        self.presenter.on_port_select(port)
+        self._root.open_view_by_type(connected_view.ConnectedView)
 
     def on_preset_create(self):
         def on_create(content):
-            self.presenter.on_preset_create(content.edited, lambda success: self._dialoger.close_dialogs() if success
+            self.presenter.on_preset_create(content.preset, lambda success: self._dialoger.close_dialogs() if success
                                             else self._dialoger.show_name_error("preset_name", "Preset"))
             self.update_current_subview()
         self._dialoger.open_confirm_dialog("Create Preset", MyCreatePresetDialogContent(), on_create)
 
     def on_preset_delete(self):
         def on_delete(*args):
-            self.presenter.on_preset_delete(self._dialoger.close_dialogs)
+            self._dialoger.close_dialogs()
+            self.presenter.on_preset_delete()
             self.update_current_subview()
         self._dialoger.open_delete_dialog("Delete Preset", "Are you sure you want to delete this preset?", on_delete)
 
@@ -89,7 +90,7 @@ class MyCreatePresetDialogContent(MDBoxLayout):
         self.ids.preset_name.text = preset_name
 
     @property
-    def edited(self) -> str:
+    def preset(self) -> str:
         return self.ids.preset_name.text
 
 

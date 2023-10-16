@@ -152,7 +152,6 @@
         MDRaisedButton:
             id: variable_save
             text: "Save"
-            helper_text_mode: "persistent"
         MDRectangleFlatButton:
             text: "Cancel"
             on_release: root.view.on_variable_cancel()
@@ -187,7 +186,7 @@
                 multiline: False
                 required: True
                 mode: "rectangle"
-                filter: "float"
+                filter: "int" # TODO: Do naprawy, bo można wpisywać litery
                 hint_text: "Interval (milliseconds)"
                 text: "100"
 
@@ -205,7 +204,6 @@
         MDRaisedButton:
             id: controller_save
             text: "Save"
-            helper_text_mode: "persistent"
         MDRectangleFlatButton:
             text: "Cancel"
             on_release: root.view.on_controller_cancel()
@@ -234,7 +232,7 @@
                 text: "Example"
             MDTextField:
                 id: controller_custom_name
-                hint_text: "Custom help text"
+                hint_text: "Custom widget text"
                 mode: "rectangle"
                 multiline: False
                 text: "Click Me!"
@@ -271,17 +269,17 @@
                 adaptive_height: True
                 orientation: "horizontal"
                 MDTextField:
-                    id: controller_start_state
-                    hint_text: "Off State Value"
+                    id: controller_min_range
+                    hint_text: "Min Range Value"
                     mode: "rectangle"
                     multiline: False
-                    text: "False"
+                    text: "0"
                 MDTextField:
-                    id: controller_end_state
-                    hint_text: "On State Value"
+                    id: controller_max_range
+                    hint_text: "Max Range Value"
                     mode: "rectangle"
                     multiline: False
-                    text: "True"
+                    text: "100"
 
 
 <MyVariableCard>
@@ -426,7 +424,7 @@
                 icon_size: dp(20)
                 rounded_button: False
                 icon: "delete"
-                on_release: root.view.on_controller_delete(root)
+                on_release: root.parent.view.on_controller_delete(root.parent)
             MDIconButton:
                 _default_icon_pad: dp(10)
                 _radius: dp(5)
@@ -434,7 +432,7 @@
                 rounded_button: False
                 icon: "dots-vertical"
                 md_bg_color: app.theme_cls.primary_color
-                on_release: root.view.on_controller_edit(root)
+                on_release: root.parent.view.on_controller_edit(root.parent)
     MDAnchorLayout:
         id: controller_bottom
         anchor_x: "left"
@@ -462,6 +460,7 @@
 
 
 <MyButtonControllerEditCard>
+    size_hint: None, None
     drag_rectangle: self.x, self.y, self.width, self.height
     drag_timeout: 10000000
     drag_distance: 0
@@ -472,12 +471,13 @@
             pos: self.parent.pos
             size_hint: 1, 1
             MDRaisedButton:
-                text: "Trigger"
+                text: "Button"
                 pos_hint: {"center_x": .5, "center_y": .5}
                 disabled: True
 
 
 <MySwitchControllerEditCard>
+    size_hint: None, None
     drag_rectangle: self.x, self.y, self.width, self.height
     drag_timeout: 10000000
     drag_distance: 0
@@ -493,6 +493,7 @@
 
 
 <MySliderControllerEditCard>
+    size_hint: None, None
     drag_rectangle: self.x, self.y, self.width, self.height
     drag_timeout: 10000000
     drag_distance: 0
@@ -508,6 +509,7 @@
 
 
 <MyTextInputControllerEditCard>
+    size_hint: None, None
     drag_rectangle: self.x, self.y, self.width, self.height
     drag_timeout: 10000000
     drag_distance: 0

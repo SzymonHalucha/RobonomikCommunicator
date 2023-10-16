@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Callable
 from presenters.base_presenter import BasePresenter
 from models.variable import Variable
+from models.controller import Controller
 from models.layout import Layout
 from models.messenger import Messenger
 from models.session import Session
@@ -28,53 +29,84 @@ class ConnectedPresenter(BasePresenter):
     def stop_listen_for_messages_from_serial(self, callback: Callable):
         self.messenger.unsubscribe(callback)
 
-    def get_current_layout(self) -> tuple[str, list[dict]]:
-        ctrls = [ctrl.serialize() for ctrl in self.session.get_controllers()]
-        return (self.session.get_current_layout().name, ctrls)
+    def get_current_layout(self) -> dict:
+        return self.session.get_current_layout().serialize()
 
-    def on_layout_create(self, layout_name: str, callback: Callable[[bool], None]):
-        layout = Layout(name=layout_name)
-        if self.session.check_if_layout_is_valid(layout):
+    def on_layout_create(self, name: str, callback: Callable[[bool], None]):
+        if self.session.check_if_layout_name_is_valid(name):
+            layout = Layout(name=name)
             self.session.set_current_layout(layout)
             self.session.save_session()
             callback(True)
         else:
             callback(False)
 
-    def on_layout_select(self, callback: Callable[[None], None]) -> list[tuple[str, Callable[[str], None]]]:
-        def on_select(name: str):
-            self.session.set_current_layout(self.session.get_layout_by_name(name))
+    def on_layout_select(self, callback: Callable[[None], None]) -> list[tuple[str, str, Callable[[str], None]]]:
+        def on_select(content):
+            self.session.set_current_layout(self.session.get_layout_by_id(content.id))
             callback(None)
-        return [(layout.name, on_select) for layout in self.session.get_layouts()]
+        return [(layout.name, layout.id, on_select) for layout in self.session.get_layouts().values()]
 
-    def on_layout_delete(self, callback: Callable[[None], None]):
+    def on_layout_save(self):
+        self.session.save_session()
+
+    def on_layout_cancel(self):
+        self.session.discard_session()
+
+    def on_layout_delete(self):
         self.session.remove_layout(self.session.get_current_layout())
         self.session.save_session()
-        callback(None)
+
+    def get_controllers(self) -> list[dict]:
+        return [ctrl.serialize() for ctrl in self.session.get_controllers().values()]
+
+    def on_controller_save(self, controller: dict, callback: Callable[[bool], None]):
+        if self.session.check_if_controller_name_is_valid(controller["name"]):
+            ctrl = Controller(name=controller["name"], type=controller["type"],
+                              custom_name=controller["custom_name"], variable_name=controller["variable_name"],
+                              range=controller["range"], position=controller["position"], size=controller["size"])
+            self.session.add_controller(ctrl)
+            callback(True)
+        else:
+            callback(False)
+
+    def on_controller_edit_save(self, controller: dict, callback: Callable[[bool], None]):
+        ctrl = self.session.get_controller_by_id(controller["id"])
+        if self.session.check_if_controller_name_is_valid(controller["name"], [ctrl]):
+            ctrl.copy_from_dict(controller)
+            callback(True)
+        else:
+            callback(False)
+
+    def on_controller_move(self, id: str, position: tuple[float, float]):
+        ctrl = self.session.get_controller_by_id(id)
+        ctrl.position = position
+
+    def on_controller_delete(self, id: str):
+        self.session.remove_controller(self.session.get_controller_by_id(id))
 
     def get_variables(self) -> list[dict]:
-        return [var.serialize() for var in self.session.get_variables()]
+        return [var.serialize() for var in self.session.get_variables().values()]
 
-    def on_variable_save(self, variable: tuple[str, str, str, int], callback: Callable[[bool], None]):
-        var = Variable(name=variable[0], type=variable[1], direction=variable[2], interval=variable[3])
-        if self.session.check_if_variable_is_valid(var):
+    def on_variable_save(self, variable: dict, callback: Callable[[bool], None]):
+        if self.session.check_if_variable_name_is_valid(variable["name"]):
+            var = Variable(name=variable["name"], type=variable["type"],
+                           direction=variable["direction"], interval=variable["interval"])
             self.session.add_variable(var)
             self.session.save_session()
             callback(True)
         else:
             callback(False)
 
-    def on_variable_edit_save(self, old: tuple[str, str, str, int], new: tuple[str, str, str, int], callback: Callable[[bool], None]):
-        old_var = self.session.get_variable_by_name(old[0])
-        new_var = Variable(name=new[0], type=new[1], direction=new[2], interval=new[3])
-        if self.session.check_if_variable_is_valid(new_var, [old_var]):
-            self.session.replace_variable(old_var, new_var)
+    def on_variable_edit_save(self, variable: dict, callback: Callable[[bool], None]):
+        var = self.session.get_variable_by_id(variable["id"])
+        if self.session.check_if_variable_name_is_valid(variable["name"], [var]):
+            var.copy_from_dict(variable)
             self.session.save_session()
             callback(True)
         else:
             callback(False)
 
-    def on_variable_delete(self, variable_name: str, callback: Callable[[None], None]):
-        self.session.remove_variable(self.session.get_variable_by_name(variable_name))
+    def on_variable_delete(self, id: str):
+        self.session.remove_variable(self.session.get_variable_by_id(id))
         self.session.save_session()
-        callback(None)

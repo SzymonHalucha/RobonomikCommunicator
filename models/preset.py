@@ -3,72 +3,82 @@ from utils.serialize import ISerialize
 from models.variable import Variable
 from models.layout import Layout
 from datetime import datetime
+import uuid
 
 
 class Preset(ISerialize):
     def __init__(self, **kwargs):
+        self.id: str = uuid.uuid4().hex
         self.name: str = kwargs.get("name", "Default")
-        self.ports: dict[str, float] = kwargs.get("ports", {})
-        self.variables: list[Variable] = kwargs.get("variables", [])
-        self.layouts: list[Layout] = kwargs.get("layouts", [])
-        self._current_layout: Layout = kwargs.get("current_layout", None)
+        self._ports: dict[str, float] = kwargs.get("ports", {})
+        self._variables: dict[str, Variable] = kwargs.get("variables", {})
+        self._layouts: dict[str, Layout] = kwargs.get("layouts", {})
+        self._current_layout: str = kwargs.get("current_layout", "")
 
     def serialize(self) -> dict:
         return {
+            "id": self.id,
             "name": self.name,
-            "ports": self.ports,
-            "variables": [variable.serialize() for variable in self.variables],
-            "layouts": [layout.serialize() for layout in self.layouts],
-            "current_layout_name": self._current_layout.name if self._current_layout is not None else None
+            "_ports": self._ports,
+            "_variables": [variable.serialize() for variable in self._variables.values()],
+            "_layouts": [layout.serialize() for layout in self._layouts.values()],
+            "_current_layout": self._current_layout
         }
 
     def deserialize(self, dict: dict) -> Preset:
+        self.id = dict["id"]
         self.name = dict["name"]
-        self.ports = dict["ports"]
-        self.variables = [Variable().deserialize(variable) for variable in dict["variables"]]
-        self.layouts = [Layout().deserialize(layout) for layout in dict["layouts"]]
-        self._current_layout = self.get_layout(dict["current_layout_name"])
+        self._ports = dict["_ports"]
+        self._variables = {variable["id"]: Variable().deserialize(variable) for variable in dict["_variables"]}
+        self._layouts = {layout["id"]: Layout().deserialize(layout) for layout in dict["_layouts"]}
+        self._current_layout = dict["_current_layout"]
         return self
 
+    def get_ports(self) -> dict[str, float]:
+        return self._ports
+
     def get_port(self, port_name: str) -> float:
-        return self.ports[port_name] if port_name in self.ports else 0
+        return self._ports[port_name] if port_name in self._ports else 0
 
     def add_port(self, port_name: str):
-        self.ports[port_name] = datetime.now().timestamp()
+        self._ports[port_name] = datetime.now().timestamp()
 
     def remove_port(self, port_name: str):
-        self.ports.pop(port_name, None)
+        self._ports.pop(port_name, None)
 
-    def get_variable(self, variable_name: str) -> Variable:
-        return next(iter(variable for variable in self.variables if variable.name == variable_name), None)
+    def get_variables(self) -> dict[str, Variable]:
+        return self._variables
+
+    def get_variable_by_id(self, id: str) -> Variable:
+        return self._variables[id]
 
     def add_variable(self, variable: Variable):
-        if variable not in self.variables:
-            self.variables.append(variable)
+        self._variables[variable.id] = variable
 
-    def replace_variable(self, old: Variable, new: Variable):
-        if old in self.variables:
-            self.variables[self.variables.index(old)] = new
+    def remove_variable_by_id(self, id: str):
+        if id in self._variables:
+            self._variables.pop(id, None)
 
-    def remove_variable(self, variable: Variable):
-        if variable in self.variables:
-            self.variables.remove(variable)
+    def get_layouts(self) -> dict[str, Layout]:
+        return self._layouts
 
-    def get_layout(self, layout_name: str) -> Layout:
-        return next(iter(layout for layout in self.layouts if layout.name == layout_name), None)
+    def get_layout_by_id(self, id: str) -> Layout:
+        return self._layouts[id]
 
     def get_current_layout(self) -> Layout:
-        return self._current_layout
+        if self._current_layout == "" or len(self._layouts) <= 0:
+            self.set_current_layout(Layout())
+        elif self._current_layout not in self._layouts:
+            self._current_layout = next(iter(self._layouts.values())).id
+        return self._layouts[self._current_layout]
 
     def set_current_layout(self, layout: Layout):
-        if layout not in self.layouts:
-            self.layouts.append(layout)
-        self._current_layout = layout
+        self._layouts[layout.id] = layout
+        self._current_layout = layout.id
 
     def add_layout(self, layout: Layout):
-        if layout not in self.layouts:
-            self.layouts.append(layout)
+        self._layouts[layout.id] = layout
 
-    def remove_layout(self, layout: Layout):
-        if layout in self.layouts:
-            self.layouts.remove(layout)
+    def remove_layout_by_id(self, id: str):
+        if id in self._layouts:
+            self._layouts.pop(id, None)

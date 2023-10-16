@@ -66,7 +66,7 @@ class Dialoger:
         Clock.schedule_once(self._delete_dialog.update_width)
         self._delete_dialog.open()
 
-    def open_list_dialog(self, title: str, items: list[tuple[str, Callable[[str], None]]]):
+    def open_list_dialog(self, title: str, items: list[tuple[str, str, Callable[[str], None]]]):
         def on_select(item_name: str, func: Callable[[str], None]):
             func(item_name)
             self.close_dialogs()
@@ -74,7 +74,7 @@ class Dialoger:
         self.close_dialogs(self._list_dialog)
         self._list_dialog.title = title
         self._list_dialog.ids.box_items.clear_widgets()
-        self._list_dialog.items = (OneLineAvatarListItem(text=item[0], divider=None, on_release=lambda x: on_select(x.text, item[1])) for item in items)
+        self._list_dialog.items = (OneLineAvatarListItem(text=item[0], id=item[1], divider=None, on_release=lambda x: on_select(x, item[2])) for item in items)
         self._list_dialog.height = 0
         for item in self._list_dialog.items:
             if isinstance(item, BaseListItem):

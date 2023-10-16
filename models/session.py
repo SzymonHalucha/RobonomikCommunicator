@@ -11,10 +11,10 @@ from models.saver import Saver
 
 class Session(ISerialize):
     def __init__(self):
-        self._presets: list[Preset] = []
         self.default_baudrate: int = 9600
         self.show_console_timestamps: bool = True
-        self._current_preset: Preset = None
+        self._presets: dict[str, Preset] = {}
+        self._current_preset: str = ""
         self._messenger: Messenger = None
         self._saver: Saver = None
 
@@ -26,17 +26,17 @@ class Session(ISerialize):
 
     def serialize(self) -> dict:
         return {
-            "presets": [preset.serialize() for preset in self._presets],
-            "current_preset_name": self._current_preset.name if self._current_preset is not None else None,
             "default_baudrate": self.default_baudrate,
-            "show_console_timestamps": self.show_console_timestamps
+            "show_console_timestamps": self.show_console_timestamps,
+            "_presets": [preset.serialize() for preset in self._presets.values()],
+            "_current_preset": self._current_preset
         }
 
     def deserialize(self, dict: dict) -> Session:
-        self._presets = [Preset().deserialize(preset) for preset in dict["presets"]]
-        self._current_preset = self.get_preset_by_name(dict["current_preset_name"])
         self.default_baudrate = dict["default_baudrate"]
         self.show_console_timestamps = dict["show_console_timestamps"]
+        self._presets = {preset["id"]: Preset().deserialize(preset) for preset in dict["_presets"]}
+        self._current_preset = dict["_current_preset"]
         return self
 
     def get_param(self, param: str):
@@ -55,133 +55,119 @@ class Session(ISerialize):
         self._saver.register(self)
 
     def get_current_preset(self) -> Preset:
-        preset = self._current_preset
-        if preset is None and len(self._presets) <= 0:
+        if len(self._presets) <= 0:
             preset = Preset()
-            preset = self._presets.append(preset)
+            self._presets[preset.id] = preset
+            self._current_preset = preset.id
+        if self._current_preset == "" or self._current_preset not in self._presets:
+            preset = next(iter(self._presets.values()))
+            self._current_preset = preset.id
         if self._messenger is not None and self._messenger.is_open:
-            preset = next(iter(sorted(self._presets, key=lambda x: x.get_port(self._messenger.port), reverse=True)), None)
+            preset: Preset = next(iter(sorted(self._presets.values(), key=lambda x: x.get_port(self._messenger.port), reverse=True)))
             preset.add_port(self._messenger.port)
-        if preset is None:
-            preset = self._presets[0]
-        self._current_preset = preset
-        return preset
+            self._current_preset = preset.id
+        return self._presets[self._current_preset]
 
     def set_current_preset(self, preset: Preset) -> Preset:
         if self._messenger is not None and self._messenger.is_open:
             preset.add_port(self._messenger.port)
-        if preset not in self._presets:
-            self._presets.append(preset)
-        self._current_preset = preset
+        self._presets[preset.id] = preset
+        self._current_preset = preset.id
         return preset
 
     def remove_current_preset(self):
-        if self._current_preset in self._presets:
-            self._presets.remove(self._current_preset)
-        self._current_preset = None
+        self._presets.pop(self._current_preset, None)
+        self._current_preset = ""
         self.get_current_preset()
 
     def get_current_layout(self) -> Layout:
-        if self._current_preset.get_current_layout() is None and len(self._current_preset.layouts) <= 0:
-            self._current_preset.set_current_layout(Layout())
-        elif self._current_preset.get_current_layout() is None:
-            self._current_preset.set_current_layout(self._current_preset.layouts[0])
-        return self._current_preset.get_current_layout()
+        return self.get_current_preset().get_current_layout()
 
     def set_current_layout(self, layout: Layout) -> Layout:
-        self._current_preset.set_current_layout(layout)
+        self.get_current_preset().set_current_layout(layout)
         return layout
 
     def remove_current_layout(self):
-        self._current_preset.remove_layout(self._current_preset.get_current_layout())
-        self._current_preset.set_current_layout(self._current_preset.layouts[0])
+        current: Preset = self.get_current_preset()
+        current.remove_layout_by_id(current.get_current_layout().id)
+        current.set_current_layout(next(iter(current.get_layouts().values())))
 
-    def get_presets(self) -> list[Preset]:
+    def get_presets(self) -> dict[str, Preset]:
         return self._presets
 
-    def get_preset_by_name(self, name: str) -> Preset:
-        return next(iter(preset for preset in self._presets if preset.name == name), None)
+    def get_preset_by_id(self, id: str) -> Preset:
+        return self._presets[id]
 
-    def get_variables(self) -> list[Variable]:
-        return self._current_preset.variables
+    def get_variables(self) -> dict[str, Variable]:
+        return self._presets[self._current_preset].get_variables()
 
-    def get_variable_by_name(self, name: str) -> Variable:
-        return self._current_preset.get_variable(name)
+    def get_variable_by_id(self, id: str) -> Variable:
+        return self._presets[self._current_preset].get_variable_by_id(id)
 
     def add_variable(self, variable: Variable) -> Variable:
-        self._current_preset.variables.append(variable)
+        self._presets[self._current_preset].add_variable(variable)
         return variable
-
-    def replace_variable(self, old: Variable, new: Variable) -> Variable:
-        self._current_preset.replace_variable(old, new)
-        return new
 
     def remove_variable(self, variable: Variable) -> Variable:
-        self._current_preset.remove_variable(variable)
+        self._presets[self._current_preset].remove_variable_by_id(variable.id)
         return variable
 
-    def get_layouts(self) -> list[Layout]:
-        return self._current_preset.layouts
+    def get_layouts(self) -> dict[str, Layout]:
+        return self._presets[self._current_preset].get_layouts()
 
-    def get_layout_by_name(self, name: str) -> Layout:
-        return self._current_preset.get_layout(name)
+    def get_layout_by_id(self, id: str) -> Layout:
+        return self._presets[self._current_preset].get_layout_by_id(id)
 
     def add_layout(self, layout: Layout) -> Layout:
-        self._current_preset.layouts.append(layout)
+        self._presets[self._current_preset].add_layout(layout)
         return layout
 
     def remove_layout(self, layout: Layout) -> Layout:
-        self._current_preset.remove_layout(layout)
+        self._presets[self._current_preset].remove_layout_by_id(layout.id)
         return layout
 
-    def get_controllers(self) -> list[Controller]:
-        return self.get_current_layout().controllers
+    def get_controllers(self) -> dict[str, Controller]:
+        return self.get_current_layout().get_controllers()
 
-    def get_controller_by_name(self, name: str) -> Controller:
-        return self.get_current_layout().get_controller(name)
+    def get_controller_by_id(self, id: str) -> Controller:
+        return self.get_current_layout().get_controller_by_id(id)
 
     def add_controller(self, controller: Controller) -> Controller:
         self.get_current_layout().add_controller(controller)
         return controller
 
-    def replace_controller(self, old: Controller, new: Controller, copy_position: bool = True) -> Controller:
-        if copy_position:
-            new.position = old.position
-        self.get_current_layout().replace_controller(old, new)
-        return new
-
     def remove_controller(self, controller: Controller) -> Controller:
-        self.get_current_layout().remove_controller(controller)
+        self.get_current_layout().remove_controller_by_id(controller.id)
         return controller
 
-    def does_preset_exist(self, preset: Preset, ignore_presets: list[Preset] = []) -> bool:
-        return any(prst.name == preset.name and prst not in ignore_presets for prst in self._presets)
+    def does_preset_name_exist(self, name: str, ignore_presets: list[Preset] = []) -> bool:
+        return any(prst.name == name and prst not in ignore_presets for prst in self.get_presets().values())
 
-    def does_variable_exist(self, variable: Variable, ignore_variables: list[Variable] = []) -> bool:
-        return any(vrbl.name == variable.name and vrbl not in ignore_variables for vrbl in self.get_current_preset().variables)
+    def does_variable_name_exist(self, name: str, ignore_variables: list[Variable] = []) -> bool:
+        return any(vrbl.name == name and vrbl not in ignore_variables for vrbl in self.get_variables().values())
 
-    def does_layout_exist(self, layout: Layout, ignore_layouts: list[Layout] = []) -> bool:
-        return any(lyut.name == layout.name and lyut not in ignore_layouts for lyut in self.get_current_preset().layouts)
+    def does_layout_name_exist(self, name: str, ignore_layouts: list[Layout] = []) -> bool:
+        return any(lyut.name == name and lyut not in ignore_layouts for lyut in self.get_layouts().values())
 
-    def does_controller_exist(self, controller: Controller, ignore_controllers: list[Controller] = []) -> bool:
-        return any(ctrl.name == controller.name and ctrl not in ignore_controllers for ctrl in self.get_controllers())
+    def does_controller_name_exist(self, name: str, ignore_controllers: list[Controller] = []) -> bool:
+        return any(ctrl.name == name and ctrl not in ignore_controllers for ctrl in self.get_controllers().values())
 
-    def check_if_preset_is_valid(self, preset: Preset, ignore_presets: list[Preset] = []) -> bool:
-        if preset.name.replace(" ", "") == "" or self.does_preset_exist(preset, ignore_presets):
+    def check_if_preset_name_is_valid(self, name: str, ignore_presets: list[Preset] = []) -> bool:
+        if name.replace(" ", "") == "" or self.does_preset_name_exist(name, ignore_presets):
             return False
         return True
 
-    def check_if_variable_is_valid(self, variable: Variable, ignore_variables: list[Variable] = []) -> bool:
-        if variable.name.replace(" ", "") == "" or self.does_variable_exist(variable, ignore_variables):
+    def check_if_variable_name_is_valid(self, name: str, ignore_variables: list[Variable] = []) -> bool:
+        if name.replace(" ", "") == "" or self.does_variable_name_exist(name, ignore_variables):
             return False
         return True
 
-    def check_if_layout_is_valid(self, layout: Layout, ignore_layouts: list[Layout] = []) -> bool:
-        if layout.name.replace(" ", "") == "" or self.does_layout_exist(layout, ignore_layouts):
+    def check_if_layout_name_is_valid(self, name: str, ignore_layouts: list[Layout] = []) -> bool:
+        if name.replace(" ", "") == "" or self.does_layout_name_exist(name, ignore_layouts):
             return False
         return True
 
-    def check_if_controller_is_valid(self, controller: Controller, ignore_controllers: list[Controller] = []) -> bool:
-        if controller.name.replace(" ", "") == "" or self.does_controller_exist(controller, ignore_controllers):
+    def check_if_controller_name_is_valid(self, name: str, ignore_controllers: list[Controller] = []) -> bool:
+        if name.replace(" ", "") == "" or self.does_controller_name_exist(name, ignore_controllers):
             return False
         return True

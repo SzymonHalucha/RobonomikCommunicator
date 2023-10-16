@@ -99,7 +99,7 @@
                 multiline: False
                 required: True
                 mode: "rectangle"
-                input_filter: 'int'
+                input_filter: "int"
                 hint_text: "Default Baudrate"
                 on_focus: root.view.on_settings_changed("default_baudrate", int(self.text) if self.text != "" and int(self.text) >= 0 else 9600)
             MyTwoLineListItemWithCheckbox:
