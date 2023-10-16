@@ -31,7 +31,7 @@ class MainView(BaseView):
             self.presenter.on_preset_create(content.preset, lambda success: self._dialoger.close_dialogs() if success
                                             else self._dialoger.show_name_error("preset_name", "Preset"))
             self.update_current_subview()
-        self._dialoger.open_confirm_dialog("Create Preset", MyCreatePresetDialogContent(), on_create)
+        self._dialoger.open_confirm_dialog("Create Preset", common.MyCreatePresetDialogContent(), on_create)
 
     def on_preset_delete(self):
         def on_delete(*args):
@@ -82,17 +82,3 @@ class SettingsSubview(BaseSubview):
         checkbox = self.ids.show_console_timestamps.ids.checkbox_container
         checkbox.active = settings["show_console_timestamps"]
         checkbox.on_release = lambda: self.view.on_settings_changed("show_console_timestamps", checkbox.active)
-
-
-class MyCreatePresetDialogContent(MDBoxLayout):
-    def __init__(self, preset_name: str = "Default"):
-        super().__init__()
-        self.ids.preset_name.text = preset_name
-
-    @property
-    def preset(self) -> str:
-        return self.ids.preset_name.text
-
-
-class MySelectPresetDialogContent(MDBoxLayout):
-    pass

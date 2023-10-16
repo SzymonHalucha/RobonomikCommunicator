@@ -107,22 +107,3 @@
                 checkbox_name: "show_console_timestamps"
                 text: "Timestamps"
                 secondary_text: "Show timestamps in the serial console"
-
-
-<MyCreatePresetDialogContent>
-    padding: dp(15)
-    adaptive_height: True
-    orientation: "vertical"
-    MDTextField:
-        id: preset_name
-        hint_text: "Name"
-        mode: "rectangle"
-        multiline: False
-        text: "Example"
-
-
-<MySelectPresetDialogContent>
-    orientation: "vertical"
-    MDScrollView:
-        MDList:
-            id: presets_list

@@ -14,6 +14,10 @@ class ConnectedPresenter(BasePresenter):
         self.messenger: Messenger = kwargs.get("messenger", None)
         self.session: Session = kwargs.get("session", None)
 
+    def on_close_port(self):
+        self.session.save_session()
+        self.messenger.close()
+
     def on_message_send(self, text: str, callback: Callable[[list[tuple[str, str, bool]], bool], None]):
         if text == "":
             return
