@@ -1,4 +1,3 @@
-using RobonomikCommunicator.Client.Pages;
 using RobonomikCommunicator.Components;
 
 namespace RobonomikCommunicator
@@ -7,38 +6,39 @@ namespace RobonomikCommunicator
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplication app = ManageBuilder(args);
+            ManageDebug(app);
+            ManageApp(app);
+            app.Run();
+        }
 
-            // Add services to the container.
-            builder.Services.AddRazorComponents()
-                .AddInteractiveServerComponents()
-                .AddInteractiveWebAssemblyComponents();
+        private static WebApplication ManageBuilder(string[] args)
+        {
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddRazorComponents().AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
+            builder.Services.AddControllers();
+            return builder.Build();
+        }
 
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
+        private static void ManageDebug(WebApplication app)
+        {
             if (app.Environment.IsDevelopment())
             {
                 app.UseWebAssemblyDebugging();
             }
             else
             {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseExceptionHandler("/error");
                 app.UseHsts();
             }
+        }
 
+        private static void ManageApp(WebApplication app)
+        {
             app.UseHttpsRedirection();
-
             app.UseStaticFiles();
             app.UseAntiforgery();
-
-            app.MapRazorComponents<App>()
-                .AddInteractiveServerRenderMode()
-                .AddInteractiveWebAssemblyRenderMode()
-                .AddAdditionalAssemblies(typeof(Counter).Assembly);
-
-            app.Run();
+            app.MapRazorComponents<App>().AddInteractiveServerRenderMode().AddInteractiveWebAssemblyRenderMode();
         }
     }
 }
