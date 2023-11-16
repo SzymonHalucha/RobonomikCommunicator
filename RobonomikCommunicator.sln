@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RobonomikCommunicator", "RobonomikCommunicator\RobonomikCommunicator.csproj", "{1EA357A5-6674-42C8-86B0-71EFE2DC299D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RobonomikCommunicator.Client", "RobonomikCommunicator.Client\RobonomikCommunicator.Client.csproj", "{C26FBDF4-21AD-42D8-A455-01236CE3838B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1EA357A5-6674-42C8-86B0-71EFE2DC299D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EA357A5-6674-42C8-86B0-71EFE2DC299D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EA357A5-6674-42C8-86B0-71EFE2DC299D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EA357A5-6674-42C8-86B0-71EFE2DC299D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C26FBDF4-21AD-42D8-A455-01236CE3838B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C26FBDF4-21AD-42D8-A455-01236CE3838B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C26FBDF4-21AD-42D8-A455-01236CE3838B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C26FBDF4-21AD-42D8-A455-01236CE3838B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D154D86E-36C9-4C6F-B3FA-CB8363A4E4CE}
+	EndGlobalSection
+EndGlobal
