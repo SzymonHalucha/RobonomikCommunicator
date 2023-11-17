@@ -1,6 +1,6 @@
 namespace RobonomikCommunicator.Components.Pages
 {
-    public partial class SliderControlCard : BaseControlCard
+    public partial class BaseControlCard
     {
 
     }
