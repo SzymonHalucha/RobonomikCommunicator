@@ -1,0 +1,10 @@
+@page "/Devices"
+@rendermode InteractiveWebAssembly
+@layout MainLayout
+@inject IServiceProvider Services
+
+<PageTitle>Robonomik Communicator - Devices</PageTitle>
+
+<h1>Devices Page @_devicesText, @_first</h1>
+<button @onclick="OnAdd">Add</button>
+<button @onclick="OnList">List</button>
