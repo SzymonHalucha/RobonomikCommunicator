@@ -1,16 +1,17 @@
-using Microsoft.AspNetCore.Components;
-
 namespace Client.Components.Widgets
 {
     public partial class DeviceCard
     {
-        [Parameter] public long Id { get; set; } = -1;
-        [Parameter] public string Title { get; set; } = string.Empty;
-        [Parameter] public string Description { get; set; } = string.Empty;
+        [Parameter] public required USBDevice Device { get; init; }
 
-        public void OnConnectHandler()
+        protected string CustomName => string.IsNullOrEmpty(Device.CustomName) ? "Default" : Device.CustomName;
+        protected string DeviceName => string.IsNullOrEmpty(Device.DeviceName) ? "Default" : Device.DeviceName;
+        protected string Manufacturer => string.IsNullOrEmpty(Device.ManufacturerName) ? "Default" : Device.ManufacturerName;
+        protected string SerialNumber => string.IsNullOrEmpty(Device.SerialNumber) ? "Default" : Device.SerialNumber;
+
+        private void OnConnectHandler()
         {
-            Console.WriteLine("On Connection Handler");
+            Device.IsConnected = !Device.IsConnected;
         }
     }
 }

@@ -1,9 +1,10 @@
-@rendermode InteractiveWebAssembly
-@layout MainLayout
-@inject IServiceProvider Services
-
 <section>
-    <h3>@Title</h3>
-    <p>@Description</p>
-    <button @onclick="OnConnectHandler">Connect</button>
+    <h3>Name</h3>
+    <InputText @bind-Value=@Device.CustomName></InputText>
+    <p>Baudrate</p>
+    <InputNumber @bind-Value=@Device.SerialBaudrate></InputNumber>
+    <p>Device Name: @DeviceName</p>
+    <p>Manufacturer: @Manufacturer</p>
+    <p>Serial Number: @SerialNumber</p>
+    <button @onclick="OnConnectHandler">@(Device.IsConnected ? "Disconnect" : "Connect")</button>
 </section>

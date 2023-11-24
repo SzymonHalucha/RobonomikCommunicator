@@ -11,19 +11,19 @@ namespace Client.Services
 
         public async Task<bool> IsSupported()
         {
-            return await _runtime.InvokeAsync<bool>("isWebUSBSupported");
+            return await _runtime.InvokeAsync<bool>("isWebSerialSupported");
         }
 
         public async Task<USBDevice> AddDevice()
         {
-            USBDevice device = await _runtime.InvokeAsync<USBDevice>("addDevice");
+            USBDevice device = await _runtime.InvokeAsync<USBDevice>("addUSBDevice");
             return device;
         }
 
-        public async Task<List<USBDevice>> GetDevicesList()
+        public async Task<USBDevice[]> GetDevicesList()
         {
-            USBDevice[] devices = await _runtime.InvokeAsync<USBDevice[]>("getDevicesList");
-            return devices.ToList();
+            USBDevice[] devices = await _runtime.InvokeAsync<USBDevice[]>("getUSBDevicesList");
+            return devices;
         }
     }
 }

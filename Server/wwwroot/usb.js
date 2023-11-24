@@ -1,34 +1,37 @@
-function isWebUSBSupported() {
-    return navigator.usb ? true : false;
+function isWebSerialSupported() {
+    return navigator.serial ? true : false;
 }
 
-async function addDevice() {
+async function addUSBDevice() {
     try {
-        let device = await navigator.usb.requestDevice({ filters: [] });
+        let device = await navigator.usb.requestDevice({ filters: [{}] });
         return {
             "ManufacturerName": device.manufacturerName,
-            "ProductName": device.productName,
-            "ProductId": device.productId,
+            "SerialNumber": device.serialNumber,
+            "DeviceName": device.productName,
+            "DeviceId": device.productId,
             "VendorId": device.vendorId
         }
     } catch (error) {
         return {
-            "ManufacturerName": "Empty",
-            "ProductName": "Empty",
-            "ProductId": -1,
-            "VendorId": -1
+            "ManufacturerName": "",
+            "SerialNumber": "",
+            "DeviceName": "",
+            "DeviceId": 0,
+            "VendorId": 0
         }
     }
 }
 
-async function getDevicesList() {
+async function getUSBDevicesList() {
     let list = await navigator.usb.getDevices();
     let devices = [];
     list.forEach(element => {
         devices.push({
             "ManufacturerName": element.manufacturerName,
-            "ProductName": element.productName,
-            "ProductId": element.productId,
+            "SerialNumber": element.serialNumber,
+            "DeviceName": element.productName,
+            "DeviceId": element.productId,
             "VendorId": element.vendorId
         })
     });

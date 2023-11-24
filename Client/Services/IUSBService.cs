@@ -4,6 +4,6 @@ namespace Client.Services
     {
         public Task<bool> IsSupported();
         public Task<USBDevice> AddDevice();
-        public Task<List<USBDevice>> GetDevicesList();
+        public Task<USBDevice[]> GetDevicesList();
     }
 }
