@@ -36,6 +36,14 @@
                 "${workspaceFolder}/RobonomikCommunicator.sln"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "maui-build",
+            "type": "maui",
+            "configuration": "Debug",
+            "targetFramework": "net8.0-windows10.0.19041.0",
+            "project": "${workspaceFolder}\\Standalone\\Standalone.csproj",
+            "problemMatcher": "$msCompile"
         }
     ]
 }

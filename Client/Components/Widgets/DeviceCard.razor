@@ -3,8 +3,10 @@
     <InputText @bind-Value=@Device.CustomName></InputText>
     <p>Baudrate</p>
     <InputNumber @bind-Value=@Device.SerialBaudrate></InputNumber>
-    <p>Device Name: @DeviceName</p>
+    <p>Device Name: @ProductName</p>
     <p>Manufacturer: @Manufacturer</p>
     <p>Serial Number: @SerialNumber</p>
     <button @onclick="OnConnectHandler">@(Device.IsConnected ? "Disconnect" : "Connect")</button>
+    <button @onclick="OnSendMessageHandler">Send</button>
+    <button @onclick="OnRecieveMessageHandler">Recieve</button>
 </section>

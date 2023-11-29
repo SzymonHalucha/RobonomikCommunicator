@@ -7,8 +7,16 @@
 <h1>Available Devices</h1>
 
 <button @onclick="OnRefreshHandler">Refresh</button>
+<button @onclick="OnAddHandler">Add Device</button>
 
-@foreach (USBDevice port in Ports)
+@if (IsSupported)
 {
-    <DeviceCard Device=@port />
+    @foreach (USBDevice device in AvailableSerials)
+    {
+        <DeviceCard Device=@device />
+    }
+}
+else
+{
+    <p>This browser doesn't support WebSerial API</p>
 }

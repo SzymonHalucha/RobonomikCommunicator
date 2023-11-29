@@ -2,19 +2,26 @@ namespace Client.Components.Pages
 {
     public partial class Devices : ComponentBase
     {
-        [Inject] protected IUSBService? USBService { get; init; }
+        [Inject] public required IUSBService USBService { get; init; }
 
-        protected USBDevice[] Ports = [];
+        private bool IsSupported => USBService.IsSupported;
+        private List<USBDevice> AvailableSerials => USBService.AvailableSerials;
 
         protected override async Task OnInitializedAsync()
         {
-            Ports = await USBService?.GetDevicesList()! ?? [];
+            await USBService.RefreshAvailableSerialsAsync();
         }
 
         private async Task OnRefreshHandler()
         {
-            Ports = await USBService?.GetDevicesList()! ?? [];
+            await USBService.RefreshAvailableSerialsAsync();
             StateHasChanged();
+        }
+
+        private async Task OnAddHandler()
+        {
+            await USBService.GetPermissionAsync();
+            await OnRefreshHandler();
         }
     }
 }

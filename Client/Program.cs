@@ -5,6 +5,6 @@ global using Client.Services;
 global using Client.Models;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.Services.AddSingleton<IUSBService, USBService>();
+// builder.Services.AddSingleton<IUSBService, USBService>();
 var host = builder.Build();
 await host.RunAsync();
