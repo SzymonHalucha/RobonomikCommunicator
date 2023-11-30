@@ -2,20 +2,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "MAUI Debug",
-            "type": "maui",
-            "request": "launch",
-            "preLaunchTask": "maui-build",
-            "configuration": "Debug",
-            "targetFramework": "net8.0-windows10.0.19041.0",
-            "project": "${workspaceFolder}\\Standalone\\Standalone.csproj"
-        },
-        {
-            "name": "Blazor Debug",
+            "name": "Blazor Web Debug",
             "type": "blazorwasm",
             "request": "launch",
             "cwd": "${workspaceFolder}/Server",
             "browser": "chrome"
+        },
+        {
+            "name": "MAUI Desktop Debug",
+            "type": "maui",
+            "request": "launch",
+            "configuration": "Debug",
+            "targetFramework": "net8.0-windows10.0.19041.0",
+            "project": "${workspaceFolder}\\Standalone\\Standalone.csproj",
+            "preLaunchTask": "maui: Build"
+        },
+        {
+            "name": "MAUI Android Debug",
+            "type": "maui",
+            "request": "launch",
+            "configuration": "Debug",
+            "targetFramework": "net8.0-android",
+            "project": "${workspaceFolder}\\Standalone\\Standalone.csproj",
+            "preLaunchTask": "maui: Build"
         }
     ]
 }
