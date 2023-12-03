@@ -14,7 +14,7 @@
             "request": "launch",
             "configuration": "Debug",
             "targetFramework": "net8.0-windows10.0.19041.0",
-            "project": "${workspaceFolder}\\Standalone\\Standalone.csproj",
+            "project": "${workspaceFolder}\\Hybrid\\Hybrid.csproj",
             "preLaunchTask": "maui: Build"
         },
         {
@@ -23,7 +23,7 @@
             "request": "launch",
             "configuration": "Debug",
             "targetFramework": "net8.0-android",
-            "project": "${workspaceFolder}\\Standalone\\Standalone.csproj",
+            "project": "${workspaceFolder}\\Hybrid\\Hybrid.csproj",
             "preLaunchTask": "maui: Build"
         }
     ]
