@@ -5,7 +5,7 @@
             "name": "Blazor Web Debug",
             "type": "blazorwasm",
             "request": "launch",
-            "cwd": "${workspaceFolder}/Server",
+            "cwd": "${workspaceFolder}\\Server",
             "browser": "chrome"
         },
         {

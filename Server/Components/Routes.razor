@@ -1,7 +1,6 @@
-<Router AppAssembly="@typeof(Program).Assembly"
-    AdditionalAssemblies="new[] { typeof(Client.Components._Imports).Assembly }">
+<Router AppAssembly="@typeof(Server.Program).Assembly" AdditionalAssemblies="new[] { typeof(Client.Program).Assembly }">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Server.Components.Layouts.MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
 </Router>

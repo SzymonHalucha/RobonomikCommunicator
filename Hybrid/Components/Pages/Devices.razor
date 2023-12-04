@@ -1,0 +1,13 @@
+@layout MainLayout
+@page "/Devices"
+
+<PageTitle>Robonomik Communicator - Devices</PageTitle>
+
+<h1>Available Devices</h1>
+
+<button @onclick="OnRefreshHandler">Refresh</button>
+
+@foreach (SerialConnection connection in Connections)
+{
+    <DeviceCard Device=@connection />
+}

@@ -1,0 +1,12 @@
+<section>
+    <h3>Custom Name</h3>
+    <InputText @bind-Value=@Device.CustomName></InputText>
+    <h4>Connection Name</h4>
+    <p>@ConnectionName</p>
+    <h4>Connection Address</h4>
+    <p>@ConnectionAddress</p>
+    <h4>Connection Status</h4>
+    <p>@IsAvailable</p>
+    <button @onclick="OnConnectionHandler">@(IsAvailable ? "Disconnect" : "Connect")</button>
+    <button @onclick="OnMessageSendHandler">Send</button>
+</section>
